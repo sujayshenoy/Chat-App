@@ -3,12 +3,16 @@ package com.example.chatapp.ui.home
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.viewpager2.widget.ViewPager2
 import com.example.chatapp.R
 import com.example.chatapp.common.Logger
 import com.example.chatapp.databinding.ActivityHomeBinding
 import com.example.chatapp.ui.authentication.AuthenticationActivity
+import com.google.android.material.tabs.TabLayout
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
@@ -21,7 +25,9 @@ class HomeActivity : AppCompatActivity() {
 
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         logger = Logger.getInstance(this@HomeActivity)
+        setSupportActionBar(binding.toolbar)
         dialog = Dialog(this@HomeActivity)
         dialog.setContentView(R.layout.progress_dialog)
         dialog.show()
@@ -31,6 +37,49 @@ class HomeActivity : AppCompatActivity() {
         initClickListeners()
         initObservers()
         initNavigators()
+        initViewPager()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.toolbar_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.logoutButton -> logout()
+        }
+        return true
+    }
+
+    private fun initViewPager() {
+        val adapter = FragmentAdapter(supportFragmentManager, lifecycle)
+        val viewPager = binding.viewPager
+        val tabLayout = binding.tabLayout
+        viewPager.adapter = adapter
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.chats_tab_text)))
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.group_chats_tab_text)))
+
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                tab?.let { viewPager.currentItem = it.position }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+//                TODO("Not yet implemented")
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+//                TODO("Not yet implemented")
+            }
+        })
+
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                tabLayout.selectTab(tabLayout.getTabAt(position))
+            }
+        })
     }
 
     private fun initNavigators() {
@@ -48,15 +97,16 @@ class HomeActivity : AppCompatActivity() {
 
         homeViewModel.getUserFromDbStatus.observe(this@HomeActivity) {
             homeViewModel.currentUser?.let {
-                binding.loginInfo.text = "Logged in: ${it.name}"
                 dialog.dismiss()
             }
         }
     }
 
     private fun initClickListeners() {
-        binding.logoutButton.setOnClickListener {
-            homeViewModel.logout(this@HomeActivity)
-        }
+
+    }
+
+    fun logout(){
+        homeViewModel.logout(this@HomeActivity)
     }
 }

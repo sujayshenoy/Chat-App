@@ -34,7 +34,7 @@ class HomeViewModel : ViewModel() {
         _goToLoginScreen.value = true
     }
 
-    fun getUserFromDB(context: Context, uid: String) {
+    private fun getUserFromDB(context: Context, uid: String) {
         viewModelScope.launch {
             Repository.getInstance(context).getUserFromDB(uid).let {
                 currentUser = it

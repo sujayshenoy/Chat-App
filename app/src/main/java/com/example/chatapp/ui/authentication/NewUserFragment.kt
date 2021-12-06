@@ -50,7 +50,7 @@ class NewUserFragment : Fragment(R.layout.fragment_new_user) {
                     user.name = if (userName.isEmpty()) user.phone else userName
                     context?.let { context ->
                         authenticationViewModel.addUserToDb(context, user)
-                        authenticationViewModel.goToHomeScreen()
+                        authenticationViewModel.getUserFromDB(context, user.id)
                     }
                 }.start()
             }.start()

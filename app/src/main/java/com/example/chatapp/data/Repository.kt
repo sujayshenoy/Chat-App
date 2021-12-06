@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.chatapp.common.Logger
 import com.example.chatapp.data.wrappers.User
 import com.example.chatapp.firebase.FirebaseDb
+import com.google.firebase.FirebaseException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.lang.Exception
@@ -39,6 +40,18 @@ class Repository(private val context: Context) : UserRepository {
                 ex.printStackTrace()
                 null
             }
+        }
+    }
+
+    fun getAllUsers(callback: (ArrayList<User>) -> Unit) {
+        try {
+            firebaseDatabase.getAllUsersFromDatabase {
+                callback(it)
+            }
+        } catch (ex: FirebaseException) {
+            logger.logInfo("Repository: FireStore Exception")
+            ex.printStackTrace()
+            callback(ArrayList())
         }
     }
 }

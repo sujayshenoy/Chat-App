@@ -14,4 +14,7 @@
     <string name="tnc_text"><![CDATA[Read our Privacy Policy. Tap \"Agree &\nContinue\" to accept the Terms of Service.]]></string>
     <string name="from_sujay_text">from\nSUJAY</string>
     <string name="invalid_phone_error">Please Enter a Valid Phone number</string>
+    <string name="chats_tab_text">Chats</string>
+    <string name="group_chats_tab_text">Group Chats</string>
+    <string name="logout_text">Logout</string>
 </resources>

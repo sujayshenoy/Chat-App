@@ -70,6 +70,7 @@
         android:textAllCaps="false"
         android:textColor="@color/primary_text"
         app:cornerRadius="@dimen/round_corner_size"
+        app:backgroundTint="@color/secondary"
         app:layout_constraintBottom_toTopOf="@id/loginGuideH8"
         app:layout_constraintEnd_toEndOf="@id/loginGuideV2"
         app:layout_constraintStart_toStartOf="@id/loginGuideV1"
