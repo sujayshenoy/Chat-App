@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/secondary">
+
+    <TextView
+        android:id="@+id/verificationCodeText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/otp_verification_code_text"
+        android:textColor="@color/primary"
+        android:textSize="@dimen/std_large_text"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/guideV3"
+        app:layout_constraintStart_toStartOf="@id/guideV1"
+        app:layout_constraintTop_toTopOf="@id/guideH1" />
+
+    <TextView
+        android:id="@+id/verificationCodeSubText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/std_med"
+        android:gravity="center"
+        android:text="@string/otp_verification_sub_text"
+        android:textSize="@dimen/std_small_text"
+        app:layout_constraintEnd_toEndOf="@id/guideV3"
+        app:layout_constraintStart_toStartOf="@id/guideV1"
+        app:layout_constraintTop_toBottomOf="@id/verificationCodeText" />
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:id="@+id/otpBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/std_large"
+        android:paddingStart="@dimen/std_small"
+        android:paddingEnd="@dimen/std_small"
+        app:flexDirection="row"
+        app:flexWrap="nowrap"
+        app:justifyContent="space_around"
+        app:layout_constraintEnd_toEndOf="@id/guideV3"
+        app:layout_constraintStart_toStartOf="@id/guideV1"
+        app:layout_constraintTop_toBottomOf="@id/verificationCodeSubText">
+
+        <EditText
+            android:id="@+id/otpEditText1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_otp_box"
+            android:gravity="center"
+            android:hint="@string/otp_hint"
+            android:inputType="numberPassword"
+            android:maxLength="1"
+            android:padding="@dimen/std_small"
+            android:textSize="@dimen/std_med_text"
+            app:layout_flexBasisPercent="13%" />
+
+        <EditText
+            android:id="@+id/otpEditText2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_otp_box"
+            android:gravity="center"
+            android:hint="@string/otp_hint"
+            android:inputType="numberPassword"
+            android:maxLength="1"
+            android:padding="@dimen/std_small"
+            android:textSize="@dimen/std_med_text"
+            app:layout_flexBasisPercent="13%" />
+
+        <EditText
+            android:id="@+id/otpEditText3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/border_otp_box"
+            android:gravity="center"
+            android:hint="@string/otp_hint"
+            android:inputType="numberPassword"
+            android:maxLength="1"
+            android:padding="@dimen/std_small"
+            android:textSize="@dimen/std_med_text"
+            app:layout_flexBasisPercent="13%" />
+
+        <EditText
+            android:id="@+id/otpEditText4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_otp_box"
+            android:gravity="center"
+            android:hint="@string/otp_hint"
+            android:inputType="numberPassword"
+            android:maxLength="1"
+            android:padding="@dimen/std_small"
+            android:textSize="@dimen/std_med_text"
+            app:layout_flexBasisPercent="13%" />
+
+        <EditText
+            android:id="@+id/otpEditText5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_otp_box"
+            android:gravity="center"
+            android:hint="@string/otp_hint"
+            android:inputType="numberPassword"
+            android:maxLength="1"
+            android:padding="@dimen/std_small"
+            android:textSize="@dimen/std_med_text"
+            app:layout_flexBasisPercent="13%" />
+
+        <EditText
+            android:id="@+id/otpEditText6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_otp_box"
+            android:gravity="center"
+            android:hint="@string/otp_hint"
+            android:inputType="numberPassword"
+            android:maxLength="1"
+            android:padding="@dimen/std_small"
+            android:textSize="@dimen/std_med_text"
+            app:layout_flexBasisPercent="13%" />
+    </com.google.android.flexbox.FlexboxLayout>
+
+    <LinearLayout
+        android:id="@+id/resendOtpBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/std_small"
+        app:layout_constraintEnd_toEndOf="@id/guideV3"
+        app:layout_constraintTop_toBottomOf="@id/otpBox">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/otp_did_not_receive_text" />
+
+        <TextView
+            android:id="@+id/resendOtpButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/otp_resend_button"
+            android:textColor="#0288d1" />
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/verifyOtpButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/otp_verify_button"
+        android:textAllCaps="false"
+        android:textColor="@color/primary_text"
+        android:textSize="@dimen/auth_submit_button_size"
+        app:layout_constraintEnd_toEndOf="@id/guideV3"
+        app:layout_constraintStart_toStartOf="@id/guideV1"
+        app:layout_constraintTop_toBottomOf="@id/resendOtpBox" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideV1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.1" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideV3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.9" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideH1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.1" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

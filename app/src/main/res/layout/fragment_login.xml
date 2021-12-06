@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/app_background">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:src="@drawable/ic_logo"
+        app:layout_constraintBottom_toBottomOf="@id/loginGuideH2"
+        app:layout_constraintEnd_toEndOf="@id/loginGuideV2"
+        app:layout_constraintStart_toStartOf="@id/loginGuideV1"
+        app:layout_constraintTop_toTopOf="@id/loginGuideH1" />
+
+    <TextView
+        android:id="@+id/loginWelcomeText"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:autoSizeTextType="uniform"
+        android:gravity="center"
+        android:text="@string/login_welcome_message"
+        android:textColor="@color/primary_text"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/loginGuideH4"
+        app:layout_constraintEnd_toEndOf="@id/loginGuideV2"
+        app:layout_constraintStart_toStartOf="@id/loginGuideV1"
+        app:layout_constraintTop_toTopOf="@id/loginGuideH3" />
+
+    <LinearLayout
+        android:id="@+id/phoneInputBox"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/ic_box"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/loginGuideH6"
+        app:layout_constraintEnd_toEndOf="@id/loginGuideV2"
+        app:layout_constraintStart_toStartOf="@id/loginGuideV1"
+        app:layout_constraintTop_toTopOf="@id/loginGuideH5">
+
+        <com.hbb20.CountryCodePicker
+            android:id="@+id/countryCodePicker"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            app:ccp_contentColor="@color/primary_text"
+            app:ccp_textSize="@dimen/login_phone_input_text_size" />
+
+        <EditText
+            android:id="@+id/phoneInputEditText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:gravity="center_vertical"
+            android:inputType="phone"
+            android:maxLength="10"
+            android:textColor="@color/primary_text"
+            android:textSize="@dimen/login_phone_input_text_size" />
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/sendButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/std_large"
+        android:layout_marginEnd="@dimen/std_large"
+        android:text="@string/login_send_otp_button"
+        android:textAllCaps="false"
+        android:textColor="@color/primary_text"
+        app:cornerRadius="@dimen/round_corner_size"
+        app:layout_constraintBottom_toTopOf="@id/loginGuideH8"
+        app:layout_constraintEnd_toEndOf="@id/loginGuideV2"
+        app:layout_constraintStart_toStartOf="@id/loginGuideV1"
+        app:layout_constraintTop_toTopOf="@id/loginGuideH7" />
+
+    <TextView
+        android:id="@+id/tncText"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:autoSizeTextType="uniform"
+        android:gravity="center"
+        android:text="@string/tnc_text"
+        android:textColor="@color/primary_text"
+        app:layout_constraintBottom_toTopOf="@id/loginGuideH10"
+        app:layout_constraintEnd_toEndOf="@id/loginGuideV2"
+        app:layout_constraintStart_toStartOf="@id/loginGuideV1"
+        app:layout_constraintTop_toTopOf="@id/loginGuideH9" />
+
+    <TextView
+        android:id="@+id/fromSujayText"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:autoSizeTextType="uniform"
+        android:gravity="center"
+        android:text="@string/from_sujay_text"
+        android:textColor="@color/primary_text"
+        app:layout_constraintBottom_toTopOf="@id/loginGuideH12"
+        app:layout_constraintEnd_toEndOf="@id/loginGuideV2"
+        app:layout_constraintStart_toStartOf="@id/loginGuideV1"
+        app:layout_constraintTop_toTopOf="@id/loginGuideH11" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/loginGuideH1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.15" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/loginGuideH2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.25" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/loginGuideH3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.28" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/loginGuideH4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.33" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/loginGuideH5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.38" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/loginGuideH6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.45" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/loginGuideH7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/loginGuideH8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.57" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/loginGuideH9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.73" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/loginGuideH10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.8" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/loginGuideH11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.9" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/loginGuideH12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.95" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/loginGuideV1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.1" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/loginGuideV2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.9" />
+</androidx.constraintlayout.widget.ConstraintLayout>
