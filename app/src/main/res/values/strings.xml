@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">Chat App</string>
+    <string name="login_welcome_message">Welcome to ChatApp</string>
+    <string name="login_send_otp_button">Send</string>
+    <string name="new_user_welcome_text">Hello,\n1234567890</string>
+    <string name="new_user_welcome_sub_text">Want us to call you something else?</string>
+    <string name="new_user_name">Your Name?</string>
+    <string name="otp_verification_code_text">Verification Code</string>
+    <string name="otp_verification_sub_text">Please enter the verification code sent to your phone</string>
+    <string name="otp_hint">-</string>
+    <string name="otp_did_not_receive_text">Did not receive the Otp?</string>
+    <string name="otp_resend_button">Resend</string>
+    <string name="otp_verify_button">Verify OTP</string>
+    <string name="tnc_text"><![CDATA[Read our Privacy Policy. Tap \"Agree &\nContinue\" to accept the Terms of Service.]]></string>
+    <string name="from_sujay_text">from\nSUJAY</string>
+    <string name="invalid_phone_error">Please Enter a Valid Phone number</string>
 </resources>
