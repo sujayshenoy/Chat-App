@@ -1,25 +1,33 @@
 package com.example.chatapp.ui.home.chat
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.chatapp.data.Repository
 import com.example.chatapp.data.wrappers.User
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
-class ChatViewModel : ViewModel() {
-    var userList: ArrayList<User>? = null
+@ExperimentalCoroutinesApi
+class ChatViewModel(userId: String) : ViewModel() {
+    var userList: ArrayList<User> = ArrayList()
 
-    private val _getUserListStatus = MutableLiveData<Boolean>()
-    val getUserListStatus = _getUserListStatus as LiveData<Boolean>
+    init {
+        getUserList(userId)
+    }
 
-    fun getUserList(context: Context) {
-        if(userList != null) {
-            _getUserListStatus.value = true
-        } else {
-            Repository.getInstance(context).getAllUsers {
-                userList = it
-                _getUserListStatus.value = true
+    private val _userListChanged = MutableLiveData<Boolean>()
+    val userListChanged = _userListChanged as LiveData<Boolean>
+
+    @ExperimentalCoroutinesApi
+    private fun getUserList(userId: String) {
+        viewModelScope.launch {
+            Repository().getAllUsers(userId).collect {
+                userList.clear()
+                userList.addAll(it)
+                _userListChanged.value = true
             }
         }
     }

@@ -17,4 +17,8 @@
     <string name="chats_tab_text">Chats</string>
     <string name="group_chats_tab_text">Group Chats</string>
     <string name="logout_text">Logout</string>
+    <string name="john_doe">John Doe</string>
+    <string name="send_message_hint">Type a message</string>
+    <string name="Empty_message_error">Please enter a message</string>
+    <string name="message_placeholder">message</string>
 </resources>

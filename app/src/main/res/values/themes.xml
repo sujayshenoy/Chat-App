@@ -15,6 +15,7 @@
         <item name="colorAccent">?attr/colorSecondary</item>
         <item name="android:textColor">@color/primary_text</item>
         <item name="android:itemBackground">@color/primary</item>
-        <item name="itemFillColor">@color/primary</item>
+        <item name="popupMenuBackground">@color/primary</item>
+        <item name="android:textColorSecondary">@color/primary_text</item>
     </style>
 </resources>

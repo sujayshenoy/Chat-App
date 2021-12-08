@@ -1,30 +1,28 @@
 package com.example.chatapp.data
 
-import android.content.Context
-import com.example.chatapp.common.Logger
+import com.example.chatapp.common.logger.Logger
+import com.example.chatapp.common.logger.LoggerImpl
+import com.example.chatapp.data.repoInterfaces.MessageRepository
+import com.example.chatapp.data.repoInterfaces.UserRepository
+import com.example.chatapp.data.wrappers.Message
 import com.example.chatapp.data.wrappers.User
 import com.example.chatapp.firebase.FirebaseDb
-import com.google.firebase.FirebaseException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import java.lang.Exception
 
-class Repository(private val context: Context) : UserRepository {
-    private val firebaseDatabase = FirebaseDb.getInstance(context)
-    private val logger = Logger.getInstance(context)
-
-    companion object {
-        private val INSTANCE: Repository? by lazy { null }
-
-        fun getInstance(context: Context) = INSTANCE ?: Repository(context)
-    }
+class Repository : UserRepository, MessageRepository {
+    private val firebaseDatabase = FirebaseDb()
+    private val logger: Logger = LoggerImpl("Repository")
 
     override suspend fun addUserToDB(user: User): Boolean {
         return withContext(Dispatchers.IO) {
             return@withContext try {
                 firebaseDatabase.addUserToDatabase(user)
             } catch (ex: Exception) {
-                logger.logInfo("Repository: FireStore Exception")
+                logger.logInfo("FireStore Exception")
                 ex.printStackTrace()
                 false
             }
@@ -36,22 +34,32 @@ class Repository(private val context: Context) : UserRepository {
             return@withContext try {
                 firebaseDatabase.getUserFromDatabase(userId)
             } catch (ex: Exception) {
-                logger.logInfo("Repository: FireStore Exception")
+                logger.logInfo("FireStore Exception")
                 ex.printStackTrace()
                 null
             }
         }
     }
 
-    fun getAllUsers(callback: (ArrayList<User>) -> Unit) {
-        try {
-            firebaseDatabase.getAllUsersFromDatabase {
-                callback(it)
+    @ExperimentalCoroutinesApi
+    fun getAllUsers(userId: String ): Flow<ArrayList<User>> {
+        return firebaseDatabase.getAllUsersFromDatabase(userId)
+    }
+
+    override suspend fun sendMessage(senderId: String, receiverId: String, message: String): String {
+        return withContext(Dispatchers.IO) {
+            return@withContext try {
+                firebaseDatabase.sendTextMessage(senderId, receiverId, message)
+            } catch (ex: Exception) {
+                logger.logInfo("FireStore Exception")
+                ex.printStackTrace()
+                ""
             }
-        } catch (ex: FirebaseException) {
-            logger.logInfo("Repository: FireStore Exception")
-            ex.printStackTrace()
-            callback(ArrayList())
         }
+    }
+
+    @ExperimentalCoroutinesApi
+    fun getMessage(senderId: String, receiverId: String): Flow<Message?> {
+        return firebaseDatabase.getAllMessages(senderId, receiverId)
     }
 }

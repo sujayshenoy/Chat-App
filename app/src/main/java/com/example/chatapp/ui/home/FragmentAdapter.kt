@@ -7,13 +7,15 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.chatapp.ui.home.chat.ChatFragment
 import com.example.chatapp.ui.home.groupchat.GroupChatFragment
 
-class FragmentAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
+class FragmentAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle, private val fragmentHostListener: ChatFragment.ChatFragmentHostListener) :
     FragmentStateAdapter(fragmentManager, lifecycle) {
     override fun getItemCount() = 2
 
     override fun createFragment(position: Int): Fragment {
         return if(position == 0) {
-            ChatFragment()
+            ChatFragment().also {
+                it.chatListener = fragmentHostListener
+            }
         } else {
             GroupChatFragment()
         }

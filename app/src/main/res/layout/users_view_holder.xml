@@ -1,45 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/app_background">
 
-    <com.google.android.flexbox.FlexboxLayout
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/userAvatar"
         android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:background="@color/primary_dark"
-        android:padding="@dimen/std_med"
-        app:flexDirection="row"
-        app:flexWrap="nowrap"
-        app:layout_constraintBottom_toTopOf="@id/chatGuideH1"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="W,1:1"
+        android:layout_margin="@dimen/std_med"
+        android:src="@drawable/user_placeholder"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="@id/chatGuideV1"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/userAvatar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/user_placeholder"
-            app:layout_flexBasisPercent="25%" />
+    <TextView
+        android:id="@+id/userName"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintVertical_bias="0"
+        android:layout_marginTop="@dimen/std_med"
+        android:ellipsize="end"
+        android:gravity="top"
+        android:maxLines="1"
+        android:text="@string/john_doe"
+        android:autoSizeTextType="uniform"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/chatGuideV1"
+        app:layout_constraintEnd_toEndOf="@id/chatGuideV2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="@dimen/std_large"/>
 
-        <TextView
-            android:id="@+id/userName"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:ellipsize="end"
-            android:gravity="top"
-            android:maxLines="1"
-            android:text="Username"
-            android:textSize="@dimen/std_large_text"
-            app:layout_flexBasisPercent="65%" />
-    </com.google.android.flexbox.FlexboxLayout>
-
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/separator_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/chatGuideV1"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/chatGuideH1"
+        android:id="@+id/chatGuideV1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.13" />
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.2" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/chatGuideV2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.6"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

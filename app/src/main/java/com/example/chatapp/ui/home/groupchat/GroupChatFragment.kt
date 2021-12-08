@@ -26,7 +26,6 @@ class GroupChatFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(GroupChatViewModel::class.java)
-        // TODO: Use the ViewModel
     }
 
 }
