@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/app_background"
+    tools:context=".ui.peerchat.PeerChatActivity">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:navigationIconTint="@color/primary_text"
+        app:title="@string/john_doe"
+        app:titleTextColor="@color/primary_text" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chatRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="@dimen/std_small"
+        app:layout_constraintBottom_toTopOf="@id/sendMessageEditText"
+        android:layout_marginBottom="@dimen/std_small"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+    <EditText
+        android:id="@+id/sendMessageEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/std_med"
+        android:layout_marginTop="@dimen/std_small"
+        android:layout_marginEnd="@dimen/std_med"
+        android:layout_marginBottom="@dimen/std_small"
+        android:autoSizeTextType="uniform"
+        android:background="@drawable/send_message_box"
+        android:gravity="center_vertical"
+        android:hint="@string/send_message_hint"
+        android:paddingStart="@dimen/std_med"
+        android:paddingEnd="@dimen/std_med"
+        android:textColor="@color/primary_text"
+        android:textColorHint="@color/message_text_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/sendMessageButton"
+        app:layout_constraintStart_toStartOf="parent"
+         />
+
+    <ImageButton
+        android:id="@+id/sendMessageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/std_small"
+        android:layout_marginTop="@dimen/std_small"
+        android:layout_marginEnd="@dimen/std_med"
+        android:layout_marginBottom="@dimen/std_small"
+        android:background="@drawable/send_button_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="w, 1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>

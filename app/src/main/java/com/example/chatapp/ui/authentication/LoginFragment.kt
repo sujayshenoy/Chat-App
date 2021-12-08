@@ -3,13 +3,12 @@ package com.example.chatapp.ui.authentication
 import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
-import android.util.Patterns
-import android.view.KeyEvent
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.chatapp.R
-import com.example.chatapp.common.Logger
+import com.example.chatapp.common.logger.Logger
+import com.example.chatapp.common.logger.LoggerImpl
 import com.example.chatapp.databinding.FragmentLoginBinding
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
@@ -25,7 +24,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         authenticationViewModel =
             ViewModelProvider(requireActivity())[AuthenticationViewModel::class.java]
         context?.let {
-            logger = Logger.getInstance(it)
+            logger = LoggerImpl("Login Fragment")
             dialog = Dialog(it)
             dialog.setContentView(R.layout.progress_dialog)
         } ?: Log.e("LoginFragment", "Empty Context")
@@ -54,7 +53,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             val validationResult: Boolean = validate(phone)
             if (validationResult) {
                 authenticationViewModel.sendOtp(
-                    requireContext(),
                     requireActivity(),
                     fullPhone
                 )

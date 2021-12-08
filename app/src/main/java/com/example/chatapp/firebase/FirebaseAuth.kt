@@ -1,11 +1,8 @@
 package com.example.chatapp.firebase
 
 import android.app.Activity
-import android.content.Context
-import com.example.chatapp.common.Logger
-import com.example.chatapp.common.SharedPrefUtil
-import com.example.chatapp.common.SharedPrefUtil.Companion.USER_ID
-import com.example.chatapp.common.Utilities
+import com.example.chatapp.common.logger.Logger
+import com.example.chatapp.common.logger.LoggerImpl
 import com.example.chatapp.data.wrappers.User
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseNetworkException
@@ -19,18 +16,12 @@ import com.google.firebase.ktx.Firebase
 import java.lang.Exception
 import java.util.concurrent.TimeUnit
 
-class FirebaseAuth(private val context: Context) {
+object FirebaseAuth {
     private val auth = Firebase.auth
-    private val logger = Logger.getInstance(context)
-
-    companion object {
-        private val INSTANCE: FirebaseAuth? by lazy { null }
-        const val PHONE_VERIFY_COMPLETE = 1
-        const val PHONE_VERIFY_FAILED = 2
-        const val PHONE_OTP_SENT = 3
-
-        fun getInstance(context: Context) = INSTANCE ?: FirebaseAuth(context)
-    }
+    private val logger: Logger = LoggerImpl("FirebaseAuthentication")
+    const val PHONE_VERIFY_COMPLETE = 1
+    const val PHONE_VERIFY_FAILED = 2
+    const val PHONE_OTP_SENT = 3
 
     private fun getAuthenticatedUser(): User? {
         return auth.currentUser?.let {
@@ -57,16 +48,10 @@ class FirebaseAuth(private val context: Context) {
                 p0.printStackTrace()
                 when (p0) {
                     is FirebaseTooManyRequestsException -> {
-                        Utilities.displayLongToast(
-                            context,
-                            "Too Many Requests!! Please try again later"
-                        )
+                        logger.logError("Too many Requests exception")
                     }
                     is FirebaseNetworkException -> {
-                        Utilities.displayLongToast(
-                            context,
-                            "Cannot reach servers!! Please Check your internet connection"
-                        )
+                        logger.logError("No Internet Connection")
                     }
                 }
                 callback(PHONE_VERIFY_FAILED, null, "", null)
@@ -77,7 +62,7 @@ class FirebaseAuth(private val context: Context) {
                 resendToken: PhoneAuthProvider.ForceResendingToken
             ) {
                 super.onCodeSent(verificationId, resendToken)
-                logger.logInfo("OnCodeSent: token = $resendToken, verifyId = $verificationId")
+                logger.logInfo("OnCodeSent: true")
                 callback(PHONE_OTP_SENT, null, verificationId, resendToken)
             }
         }
@@ -123,7 +108,7 @@ class FirebaseAuth(private val context: Context) {
                         logger.logInfo("Invalid OTP")
                     } else {
                         ex.printStackTrace()
-                        logger.logInfo("Unknown Error")
+                        logger.logError("Unknown Error")
                     }
                 } finally {
                     callback(null)
@@ -133,7 +118,6 @@ class FirebaseAuth(private val context: Context) {
     }
 
     fun logout() {
-        SharedPrefUtil.getInstance(context).clearAll()
         auth.signOut()
     }
 }

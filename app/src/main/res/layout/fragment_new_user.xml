@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/secondary"
+    android:background="@color/primary"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,7 +16,7 @@
             android:layout_height="0dp"
             android:autoSizeTextType="uniform"
             android:text="@string/new_user_welcome_text"
-            android:textColor="@color/primary"
+            android:textColor="@color/secondary"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@id/guideH2"
             app:layout_constraintEnd_toEndOf="@id/guideV3"
@@ -42,7 +42,7 @@
             android:hint="@string/new_user_name"
             android:inputType="textNoSuggestions"
             android:textColor="@color/primary_text"
-            android:textColorHint="@color/primary"
+            android:textColorHint="@color/secondary"
             android:textSize="26sp"
             app:layout_constraintBottom_toTopOf="@id/guideH6"
             app:layout_constraintEnd_toEndOf="@id/guideV3"

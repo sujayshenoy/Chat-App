@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#00b09c</color>
-    <color name="primary_light">#59e3cd</color>
-    <color name="primary_dark">#00806e</color>
+    <color name="secondary">#00b09c</color>
+    <color name="secondary_light">#59e3cd</color>
+    <color name="secondary_dark">#00806e</color>
     <color name="primary_text">#F9FFFF</color>
-    <color name="secondary">#232d36</color>
-    <color name="secondary_light">#4b5660</color>
-    <color name="secondary_dark">#000210</color>
+    <color name="primary">#232d36</color>
+    <color name="primary_light">#4b5660</color>
+    <color name="primary_dark">#000210</color>
+    <color name="app_background">#101D25</color>
     <color name="secondary_text">#101D25</color>
+    <color name="app_bar_text_color">#9DA5AC</color>
+    <color name="separator_color">#18252D</color>
+    <color name="message_text_color">#707980</color>
+    <color name="button_text">#F9FFFF</color>
+    <color name="message_background">#02AF9C</color>
 </resources>

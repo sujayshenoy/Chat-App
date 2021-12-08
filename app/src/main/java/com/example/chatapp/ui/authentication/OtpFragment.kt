@@ -9,8 +9,9 @@ import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.chatapp.R
-import com.example.chatapp.common.Logger
+import com.example.chatapp.common.logger.LoggerImpl
 import com.example.chatapp.common.Utilities
+import com.example.chatapp.common.logger.Logger
 import com.example.chatapp.databinding.FragmentOtpBinding
 
 class OtpFragment : Fragment(R.layout.fragment_otp) {
@@ -26,7 +27,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         authenticationViewModel =
             ViewModelProvider(requireActivity())[AuthenticationViewModel::class.java]
         context?.let {
-            logger = Logger.getInstance(it)
+            logger = LoggerImpl("Otp Fragment")
             dialog = Dialog(it)
             dialog.setContentView(R.layout.progress_dialog)
         } ?: Log.e("OtpFragment", "Empty Context")
@@ -187,19 +188,15 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 } ?: logger.logError("Empty Context")
                 dialog.dismiss()
             } else {
-                context?.let {
-                    authenticationViewModel.verifyOtp(it, otp)
-                } ?: logger.logError("Empty Context")
+                authenticationViewModel.verifyOtp(otp)
             }
         }
 
         binding.resendOtpButton.setOnClickListener {
             dialog.show()
-            context?.let { context ->
-                activity?.let { activity ->
-                    authenticationViewModel.resendOtp(context, activity)
-                } ?: logger.logError("Empty Parent Activity")
-            } ?: logger.logError("Empty Context")
+            activity?.let { activity ->
+                authenticationViewModel.resendOtp(activity)
+            } ?: logger.logError("Empty Parent Activity")
         }
     }
 
