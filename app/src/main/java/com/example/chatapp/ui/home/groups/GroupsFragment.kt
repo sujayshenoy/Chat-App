@@ -2,19 +2,19 @@ package com.example.chatapp.ui.home.groups
 
 import android.app.Dialog
 import android.content.Intent
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatapp.R
 import com.example.chatapp.common.logger.Logger
 import com.example.chatapp.common.logger.LoggerImpl
 import com.example.chatapp.data.wrappers.Group
 import com.example.chatapp.databinding.FragmentGroupChatBinding
-import com.example.chatapp.ui.home.ChatFragmentHostListener
-import com.example.chatapp.ui.home.HomeViewModel
-import com.example.chatapp.ui.home.RecyclerItemClickListener
+import com.example.chatapp.ui.home.common.listeners.ChatFragmentHostListener
+import com.example.chatapp.ui.home.common.viewmodel.HomeViewModel
+import com.example.chatapp.ui.home.common.listeners.RecyclerItemClickListener
 import com.example.chatapp.ui.home.newgroup.NewGroupActivity
 import com.example.chatapp.ui.home.newgroup.NewGroupActivity.Companion.CURRENT_USER
 import com.example.chatapp.ui.home.newgroup.NewGroupActivity.Companion.USER_LIST

@@ -29,11 +29,11 @@
             android:exported="true"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.peerchat.PeerChatActivity"
+            android:name="com.example.chatapp.ui.home.peerchat.PeerChatActivity"
             android:exported="true"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".ui.groupChat.GroupChatActivity"
+            android:name="com.example.chatapp.ui.home.groupChat.GroupChatActivity"
             android:exported="true"
             android:screenOrientation="portrait"/>
         <activity

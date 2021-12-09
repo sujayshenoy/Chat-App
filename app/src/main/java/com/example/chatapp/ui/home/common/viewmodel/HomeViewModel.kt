@@ -1,4 +1,4 @@
-package com.example.chatapp.ui.home
+package com.example.chatapp.ui.home.common.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chatapp.common.logger.Logger
 import com.example.chatapp.common.logger.LoggerImpl
-import com.example.chatapp.data.Repository
+import com.example.chatapp.data.repo.Repository
 import com.example.chatapp.data.wrappers.Group
 import com.example.chatapp.data.wrappers.User
 import com.example.chatapp.firebase.FirebaseAuth
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 @ExperimentalCoroutinesApi
 class HomeViewModel(uid: String) : ViewModel() {
     private val repository = Repository()
-    var currentUser : User ?= null
+    var currentUser: User? = null
     var userList: ArrayList<User> = ArrayList()
     var groupList: ArrayList<Group> = ArrayList()
     private val logger: Logger = LoggerImpl("HomeViewModel")

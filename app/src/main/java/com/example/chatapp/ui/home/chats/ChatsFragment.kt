@@ -1,19 +1,19 @@
 package com.example.chatapp.ui.home.chats
 
 import android.app.Dialog
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatapp.R
 import com.example.chatapp.common.logger.Logger
 import com.example.chatapp.common.logger.LoggerImpl
 import com.example.chatapp.data.wrappers.User
 import com.example.chatapp.databinding.FragmentChatBinding
-import com.example.chatapp.ui.home.ChatFragmentHostListener
-import com.example.chatapp.ui.home.HomeViewModel
-import com.example.chatapp.ui.home.RecyclerItemClickListener
+import com.example.chatapp.ui.home.common.listeners.ChatFragmentHostListener
+import com.example.chatapp.ui.home.common.viewmodel.HomeViewModel
+import com.example.chatapp.ui.home.common.listeners.RecyclerItemClickListener
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 class ChatsFragment : Fragment(R.layout.fragment_chat) {

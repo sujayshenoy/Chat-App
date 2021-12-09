@@ -10,9 +10,8 @@ import com.example.chatapp.common.logger.Logger
 import com.example.chatapp.common.logger.LoggerImpl
 import com.example.chatapp.data.wrappers.User
 import com.example.chatapp.databinding.ActivityNewGroupBinding
-import com.example.chatapp.ui.home.ViewModelFactory
 
-class NewGroupActivity: AppCompatActivity() {
+class NewGroupActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNewGroupBinding
     private lateinit var adapter: NewGroupAdapter
     private lateinit var newGroupViewModel: NewGroupViewModel
@@ -44,7 +43,7 @@ class NewGroupActivity: AppCompatActivity() {
     }
 
     private fun initObservers() {
-        newGroupViewModel.createGroupStatus.observe(this@NewGroupActivity){
+        newGroupViewModel.createGroupStatus.observe(this@NewGroupActivity) {
             dialog.dismiss()
             finish()
         }
@@ -62,7 +61,7 @@ class NewGroupActivity: AppCompatActivity() {
         adapter = NewGroupAdapter(userList)
         val recycler = binding.memberRecyclerView
         recycler.layoutManager = LinearLayoutManager(this@NewGroupActivity)
-        adapter.setOnItemCheckedListener(object : NewGroupAdapter.OnItemChecked{
+        adapter.setOnItemCheckedListener(object : NewGroupAdapter.OnItemChecked {
             override fun onItemChecked(position: Int) {
                 selectedMembers.add(userList[position])
                 logger.logInfo("selectedMembers: $selectedMembers")
@@ -83,7 +82,7 @@ class NewGroupActivity: AppCompatActivity() {
 
         binding.createGroupButton.setOnClickListener {
             val groupName = binding.groupName
-            if(groupName.text.isEmpty()) {
+            if (groupName.text.isEmpty()) {
                 groupName.error = getString(R.string.empty_group_name_error_text)
             } else if (selectedMembers.size == 0) {
                 groupName.error = getString(R.string.empty_selected_members_error_text)

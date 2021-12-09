@@ -12,6 +12,7 @@ import com.example.chatapp.data.models.DbMessage.Companion.CONTENT_TYPE
 import com.example.chatapp.data.models.DbMessage.Companion.SENDER_ID
 import com.example.chatapp.data.models.DbMessage.Companion.TIMESTAMP
 import com.example.chatapp.data.models.DbUser
+import com.example.chatapp.data.models.DbUser.Companion.FIREBASE_MESSAGE_TOKEN
 import com.example.chatapp.data.models.DbUser.Companion.USER_NAME
 import com.example.chatapp.data.models.DbUser.Companion.USER_PHONE
 import com.example.chatapp.data.wrappers.Group
@@ -21,7 +22,7 @@ import com.google.firebase.FirebaseException
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -70,8 +71,9 @@ class FirebaseDb {
                                 snapshot.data as HashMap
                                 val user = User(
                                     uid,
-                                    snapshot["name"].toString(),
-                                    snapshot["phone"].toString()
+                                    snapshot[USER_NAME].toString(),
+                                    snapshot[USER_PHONE].toString(),
+                                    messageToken = snapshot[FIREBASE_MESSAGE_TOKEN].toString()
                                 )
                                 continuation.resumeWith(Result.success(user))
                             }
@@ -94,7 +96,8 @@ class FirebaseDb {
         receiverId: String,
     ): Flow<Message?> {
         return callbackFlow {
-            val channelId = if(receiverId.isEmpty()) senderId else getChannelId(senderId, receiverId)
+            val channelId =
+                if (receiverId.isEmpty()) senderId else getChannelId(senderId, receiverId)
             val ref = fireStore.collection(CHANNEL_COLLECTION).document(channelId)
                 .collection(MESSAGE_COLLECTION).orderBy(TIMESTAMP)
                 .addSnapshotListener { snapshot, e ->

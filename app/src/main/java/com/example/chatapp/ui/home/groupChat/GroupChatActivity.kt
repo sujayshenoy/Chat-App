@@ -1,27 +1,31 @@
-package com.example.chatapp.ui.peerchat
+package com.example.chatapp.ui.home.groupChat
 
-import androidx.appcompat.app.AppCompatActivity
+import android.app.Dialog
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatapp.R
+import com.example.chatapp.common.logger.Logger
 import com.example.chatapp.common.logger.LoggerImpl
+import com.example.chatapp.data.wrappers.Group
 import com.example.chatapp.data.wrappers.User
 import com.example.chatapp.databinding.ActivityChatScreenBinding
-import com.example.chatapp.ui.home.ViewModelFactory
+import com.example.chatapp.ui.home.common.viewmodel.ViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-class PeerChatActivity : AppCompatActivity() {
+class GroupChatActivity : AppCompatActivity() {
     private lateinit var binding: ActivityChatScreenBinding
-    private lateinit var peerChatViewModel: PeerChatViewModel
-    private lateinit var adapter: ChatRecyclerAdapter
-    private lateinit var receiver: User
+    private lateinit var groupChatViewModel: GroupChatViewModel
+    private lateinit var adapter: GroupChatRecyclerAdapter
     private lateinit var sender: User
-    private lateinit var logger: LoggerImpl
+    private lateinit var group: Group
+    private lateinit var dialog: Dialog
+    private val logger: Logger = LoggerImpl("GroupChat Activity")
 
     companion object {
-        const val ARG_USER_RECEIVER = "userReceiver"
         const val ARG_USER_SENDER = "userSender"
+        const val ARG_GROUP = "group"
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -31,24 +35,29 @@ class PeerChatActivity : AppCompatActivity() {
         binding = ActivityChatScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         getDataFromIntent()
-        peerChatViewModel = ViewModelProvider(
-            this@PeerChatActivity,
-            ViewModelFactory(PeerChatViewModel(sender.id, receiver.id))
-        )[PeerChatViewModel::class.java]
-        logger = LoggerImpl("PeerChat Activity")
+        groupChatViewModel = ViewModelProvider(
+            this@GroupChatActivity,
+            ViewModelFactory(GroupChatViewModel(group))
+        )[GroupChatViewModel::class.java]
+        dialog = Dialog(this@GroupChatActivity)
+        dialog.setContentView(R.layout.progress_dialog)
+        dialog.show()
 
-        binding.toolbar.title = receiver.name
-        initRecyclerView()
+        binding.toolbar.title = group.name
         initClickListeners()
         initObservers()
     }
 
     @ExperimentalCoroutinesApi
     private fun initRecyclerView() {
-        adapter = ChatRecyclerAdapter(peerChatViewModel.messageList, sender.id)
+        adapter = GroupChatRecyclerAdapter(
+            groupChatViewModel.messageList,
+            groupChatViewModel.memberList,
+            sender.id
+        )
         val recyclerView = binding.chatRecyclerView
         recyclerView.adapter = adapter
-        val layoutManager = LinearLayoutManager(this@PeerChatActivity)
+        val layoutManager = LinearLayoutManager(this@GroupChatActivity)
         layoutManager.stackFromEnd = true
         recyclerView.layoutManager = layoutManager
 
@@ -57,12 +66,18 @@ class PeerChatActivity : AppCompatActivity() {
 
     @ExperimentalCoroutinesApi
     private fun initObservers() {
-        peerChatViewModel.newMessageStatus.observe(this@PeerChatActivity) {
-            adapter.notifyDataSetChanged()
-            if(adapter.itemCount != 0) {
-                binding.chatRecyclerView.smoothScrollToPosition(adapter.itemCount - 1)
+        groupChatViewModel.newMessageStatus.observe(this@GroupChatActivity) {
+            if (this::adapter.isInitialized) {
+                adapter.notifyDataSetChanged()
+                if (adapter.itemCount != 0) {
+                    binding.chatRecyclerView.smoothScrollToPosition(adapter.itemCount - 1)
+                }
             }
-            logger.logInfo("Messages: ${peerChatViewModel.messageList}")
+        }
+
+        groupChatViewModel.fetchMembeListStatus.observe(this@GroupChatActivity) {
+            initRecyclerView()
+            dialog.dismiss()
         }
     }
 
@@ -71,12 +86,8 @@ class PeerChatActivity : AppCompatActivity() {
         binding.sendMessageButton.setOnClickListener {
             val message = binding.sendMessageEditText.text.toString()
             if (message.isNotEmpty()) {
-                peerChatViewModel.sendMessage(
-                    sender.id,
-                    receiver.id,
-                    message
-                )
                 binding.sendMessageEditText.setText("")
+                groupChatViewModel.sendMessage(sender.id, message)
             } else {
                 binding.sendMessageEditText.error = getString(R.string.Empty_message_error)
             }
@@ -89,8 +100,8 @@ class PeerChatActivity : AppCompatActivity() {
 
     private fun getDataFromIntent() {
         intent.extras?.let {
-            receiver = it.getSerializable(ARG_USER_RECEIVER) as User
             sender = it.getSerializable(ARG_USER_SENDER) as User
-        } ?: logger.logError("Receiver User Null")
+            group = it.getSerializable(ARG_GROUP) as Group
+        } ?: logger.logError("Receiver User Null or Group Null")
     }
 }

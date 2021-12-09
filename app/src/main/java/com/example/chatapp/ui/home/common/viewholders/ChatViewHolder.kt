@@ -1,4 +1,4 @@
-package com.example.chatapp.ui.peerchat
+package com.example.chatapp.ui.home.common.viewholders
 
 import android.view.View
 import android.widget.TextView

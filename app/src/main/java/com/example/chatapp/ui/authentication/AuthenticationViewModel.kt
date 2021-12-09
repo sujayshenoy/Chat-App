@@ -1,15 +1,11 @@
 package com.example.chatapp.ui.authentication
 
 import android.app.Activity
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.chatapp.common.sharedpreferences.SharedPrefUtilImpl
-import com.example.chatapp.common.Utilities
-import com.example.chatapp.common.sharedpreferences.SharedPrefUtil
-import com.example.chatapp.data.Repository
+import com.example.chatapp.data.repo.Repository
 import com.example.chatapp.data.wrappers.User
 import com.example.chatapp.firebase.FirebaseAuth
 import com.example.chatapp.firebase.FirebaseAuth.PHONE_OTP_SENT
@@ -42,25 +38,25 @@ class AuthenticationViewModel : ViewModel() {
         resendToken: PhoneAuthProvider.ForceResendingToken? = null
     ) {
         FirebaseAuth.sendOtp(phone, activity, resendToken) { status, user, verificationID, token ->
-                when (status) {
-                    PHONE_OTP_SENT -> {
-                        storedVerificationId = verificationID
-                        storedRetryToken = token
-                        lastUsedPhone = phone
-                        if (resendToken == null) {
-                            _sendOtpStatus.value = true
-                        } else {
-                            _resendOtpStatus.value = true
-                        }
+            when (status) {
+                PHONE_OTP_SENT -> {
+                    storedVerificationId = verificationID
+                    storedRetryToken = token
+                    lastUsedPhone = phone
+                    if (resendToken == null) {
+                        _sendOtpStatus.value = true
+                    } else {
+                        _resendOtpStatus.value = true
+                    }
 //                        Utilities.displayShortToast(context, "Otp Sent to $phone")
-                    }
+                }
 
-                    PHONE_VERIFY_COMPLETE, PHONE_VERIFY_FAILED -> {
-                        loggedInUser = user
-                        _verifyUserStatus.value = user
-                    }
+                PHONE_VERIFY_COMPLETE, PHONE_VERIFY_FAILED -> {
+                    loggedInUser = user
+                    _verifyUserStatus.value = user
                 }
             }
+        }
     }
 
     fun resendOtp(activity: Activity) {

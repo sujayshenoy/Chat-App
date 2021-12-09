@@ -6,11 +6,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapp.R
 import com.example.chatapp.data.wrappers.User
 
-class NewGroupAdapter(private val userList: ArrayList<User>): RecyclerView.Adapter<MemberViewHolder>() {
+class NewGroupAdapter(private val userList: ArrayList<User>) :
+    RecyclerView.Adapter<MemberViewHolder>() {
     private lateinit var onItemCheckedListener: OnItemChecked
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemberViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.member_view_holder, parent, false)
+        val itemView =
+            LayoutInflater.from(parent.context).inflate(R.layout.member_view_holder, parent, false)
         return MemberViewHolder(itemView)
     }
 
@@ -19,7 +21,7 @@ class NewGroupAdapter(private val userList: ArrayList<User>): RecyclerView.Adapt
         holder.name.text = currentUser.name
 
         holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
-            if(isChecked) {
+            if (isChecked) {
                 onItemCheckedListener.onItemChecked(position)
             } else {
                 onItemCheckedListener.onItemUnchecked(position)

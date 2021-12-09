@@ -1,4 +1,4 @@
-package com.example.chatapp.ui.groupChat
+package com.example.chatapp.ui.home.groupChat
 
 import android.view.View
 import android.widget.TextView

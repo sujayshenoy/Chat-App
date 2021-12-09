@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapp.R
 import com.example.chatapp.data.wrappers.User
-import com.example.chatapp.ui.home.EntityViewHolder
-import com.example.chatapp.ui.home.RecyclerItemClickListener
+import com.example.chatapp.ui.home.common.viewholders.EntityViewHolder
+import com.example.chatapp.ui.home.common.listeners.RecyclerItemClickListener
 
 class ChatsRecyclerAdapter(private val userList: ArrayList<User>) :
     RecyclerView.Adapter<EntityViewHolder>() {

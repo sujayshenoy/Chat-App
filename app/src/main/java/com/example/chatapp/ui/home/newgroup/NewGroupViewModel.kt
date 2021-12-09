@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.chatapp.data.Repository
+import com.example.chatapp.data.repo.Repository
 import com.example.chatapp.data.wrappers.User
 import kotlinx.coroutines.launch
 

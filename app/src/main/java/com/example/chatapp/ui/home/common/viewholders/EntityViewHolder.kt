@@ -1,13 +1,14 @@
-package com.example.chatapp.ui.home
+package com.example.chatapp.ui.home.common.viewholders
 
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapp.R
-import com.example.chatapp.ui.home.RecyclerItemClickListener
+import com.example.chatapp.ui.home.common.listeners.RecyclerItemClickListener
 import de.hdodenhof.circleimageview.CircleImageView
 
-class EntityViewHolder(itemView: View, itemClickListener: RecyclerItemClickListener): RecyclerView.ViewHolder(itemView) {
+class EntityViewHolder(itemView: View, itemClickListener: RecyclerItemClickListener) :
+    RecyclerView.ViewHolder(itemView) {
     val entityName: TextView = itemView.findViewById(R.id.entityName)
     val entityAvatar: CircleImageView = itemView.findViewById(R.id.entityAvatar)
 
