@@ -5,9 +5,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.chatapp.R
-import com.example.chatapp.common.logger.LoggerImpl
 import com.example.chatapp.common.Utilities
 import com.example.chatapp.common.logger.Logger
+import com.example.chatapp.common.logger.LoggerImpl
 import com.example.chatapp.common.sharedpreferences.SharedPrefUtil
 import com.example.chatapp.common.sharedpreferences.SharedPrefUtil.Companion.USER_ID
 import com.example.chatapp.common.sharedpreferences.SharedPrefUtilImpl

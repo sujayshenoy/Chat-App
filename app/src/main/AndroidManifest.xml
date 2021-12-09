@@ -11,9 +11,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ChatApp">
         <activity
-            android:name=".ui.peerchat.PeerChatActivity"
-            android:exported="true" />
-        <activity
             android:name=".ui.splash.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait">
@@ -31,6 +28,18 @@
             android:name=".ui.home.HomeActivity"
             android:exported="true"
             android:screenOrientation="portrait" />
+        <activity
+            android:name="com.example.chatapp.ui.home.peerchat.PeerChatActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name="com.example.chatapp.ui.home.groupChat.GroupChatActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.home.newgroup.NewGroupActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

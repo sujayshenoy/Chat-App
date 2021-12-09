@@ -1,18 +1,18 @@
-package com.example.chatapp.ui.peerchat
+package com.example.chatapp.ui.home.peerchat
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatapp.R
 import com.example.chatapp.common.logger.LoggerImpl
 import com.example.chatapp.data.wrappers.User
-import com.example.chatapp.databinding.ActivityPeerChatBinding
-import com.example.chatapp.ui.home.ViewModelFactory
+import com.example.chatapp.databinding.ActivityChatScreenBinding
+import com.example.chatapp.ui.home.common.viewmodel.ViewModelFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 class PeerChatActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityPeerChatBinding
+    private lateinit var binding: ActivityChatScreenBinding
     private lateinit var peerChatViewModel: PeerChatViewModel
     private lateinit var adapter: ChatRecyclerAdapter
     private lateinit var receiver: User
@@ -28,7 +28,7 @@ class PeerChatActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityPeerChatBinding.inflate(layoutInflater)
+        binding = ActivityChatScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         getDataFromIntent()
         peerChatViewModel = ViewModelProvider(
@@ -59,7 +59,7 @@ class PeerChatActivity : AppCompatActivity() {
     private fun initObservers() {
         peerChatViewModel.newMessageStatus.observe(this@PeerChatActivity) {
             adapter.notifyDataSetChanged()
-            if(adapter.itemCount != 0) {
+            if (adapter.itemCount != 0) {
                 binding.chatRecyclerView.smoothScrollToPosition(adapter.itemCount - 1)
             }
             logger.logInfo("Messages: ${peerChatViewModel.messageList}")

@@ -1,28 +1,28 @@
-package com.example.chatapp.ui.home.chat
+package com.example.chatapp.ui.home.chats
 
 import android.app.Dialog
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatapp.R
 import com.example.chatapp.common.logger.Logger
 import com.example.chatapp.common.logger.LoggerImpl
 import com.example.chatapp.data.wrappers.User
 import com.example.chatapp.databinding.FragmentChatBinding
-import com.example.chatapp.ui.home.HomeViewModel
-import com.example.chatapp.ui.home.ViewModelFactory
+import com.example.chatapp.ui.home.common.listeners.ChatFragmentHostListener
+import com.example.chatapp.ui.home.common.viewmodel.HomeViewModel
+import com.example.chatapp.ui.home.common.listeners.RecyclerItemClickListener
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-class ChatFragment : Fragment(R.layout.fragment_chat) {
+class ChatsFragment : Fragment(R.layout.fragment_chat) {
     private lateinit var binding: FragmentChatBinding
-    private lateinit var chatViewModel: ChatViewModel
-    private lateinit var logger: Logger
+    private lateinit var homeViewModel: HomeViewModel
+    private val logger: Logger = LoggerImpl("Chat Fragment")
     private lateinit var dialog: Dialog
-    private lateinit var adapter: RecyclerAdapter
-    var chatListener: ChatFragmentHostListener? = null
+    private lateinit var adapter: ChatsRecyclerAdapter
+    var chatListener: ChatFragmentHostListener<User>? = null
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -30,11 +30,10 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
 
         binding = FragmentChatBinding.bind(view)
         context?.let {
-            logger = LoggerImpl("Chat Fragment")
             dialog = Dialog(it)
             dialog.setContentView(R.layout.progress_dialog)
             dialog.show()
-        } ?: Log.e("ChatFragment", "Empty Context")
+        } ?: logger.logError("Empty Context")
 
         initViewModel()
         initRecyclerView()
@@ -44,16 +43,13 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
     @ExperimentalCoroutinesApi
     private fun initViewModel() {
         activity?.let { activity ->
-            val sharedModel = ViewModelProvider(activity)[HomeViewModel::class.java]
-            sharedModel.currentUser?.let {
-                chatViewModel = ViewModelProvider(activity, ViewModelFactory(ChatViewModel(it.id)))[ChatViewModel::class.java]
-            }
+            homeViewModel = ViewModelProvider(activity)[HomeViewModel::class.java]
         } ?: logger.logError("Empty Activity")
     }
 
     @ExperimentalCoroutinesApi
     private fun initObservers() {
-        chatViewModel.userListChanged.observe(viewLifecycleOwner) {
+        homeViewModel.userListChanged.observe(viewLifecycleOwner) {
             adapter.notifyDataSetChanged()
             dialog.dismiss()
         }
@@ -61,24 +57,18 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
 
     @ExperimentalCoroutinesApi
     private fun initRecyclerView() {
-        adapter = RecyclerAdapter(chatViewModel.userList)
+        adapter = ChatsRecyclerAdapter(homeViewModel.userList)
         val recyclerView = binding.chatsRecyclerView
         context?.let { context ->
             val layoutManager = LinearLayoutManager(context)
-            layoutManager.reverseLayout = true
-            layoutManager.stackFromEnd = true
             recyclerView.layoutManager = layoutManager
         } ?: logger.logError("Empty Context")
         adapter.setOnItemClickListener(object : RecyclerItemClickListener {
             override fun onItemClick(position: Int) {
-                val selectedUser = chatViewModel.userList[position]
+                val selectedUser = homeViewModel.userList[position]
                 chatListener?.onChatItemClicked(selectedUser)
             }
         })
         recyclerView.adapter = adapter
-    }
-
-    interface ChatFragmentHostListener {
-        fun onChatItemClicked(selectedUser: User)
     }
 }

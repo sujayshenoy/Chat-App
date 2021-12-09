@@ -1,10 +1,11 @@
-package com.example.chatapp.ui.peerchat
+package com.example.chatapp.ui.home.peerchat
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapp.R
 import com.example.chatapp.data.wrappers.Message
+import com.example.chatapp.ui.home.common.viewholders.ChatViewHolder
 
 class ChatRecyclerAdapter(
     private val messageList: ArrayList<Message>,

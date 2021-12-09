@@ -14,12 +14,17 @@ import com.example.chatapp.common.logger.LoggerImpl
 import com.example.chatapp.common.sharedpreferences.SharedPrefUtil
 import com.example.chatapp.common.sharedpreferences.SharedPrefUtil.Companion.USER_ID
 import com.example.chatapp.common.sharedpreferences.SharedPrefUtilImpl
+import com.example.chatapp.data.wrappers.Group
 import com.example.chatapp.data.wrappers.User
 import com.example.chatapp.databinding.ActivityHomeBinding
 import com.example.chatapp.ui.authentication.AuthenticationActivity
-import com.example.chatapp.ui.home.chat.ChatFragment
-import com.example.chatapp.ui.peerchat.PeerChatActivity
+import com.example.chatapp.ui.home.common.listeners.ChatFragmentHostListener
+import com.example.chatapp.ui.home.common.viewmodel.HomeViewModel
+import com.example.chatapp.ui.home.common.viewmodel.ViewModelFactory
+import com.example.chatapp.ui.home.groupChat.GroupChatActivity
+import com.example.chatapp.ui.home.peerchat.PeerChatActivity
 import com.google.android.material.tabs.TabLayout
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
@@ -45,10 +50,14 @@ class HomeActivity : AppCompatActivity() {
         initObservers()
     }
 
+    @ExperimentalCoroutinesApi
     private fun initViewModel() {
         val uid = sharedPrefUtil.getString(USER_ID)
         uid?.let {
-            homeViewModel = ViewModelProvider(this@HomeActivity, ViewModelFactory(HomeViewModel(it)))[HomeViewModel::class.java]
+            homeViewModel = ViewModelProvider(
+                this@HomeActivity,
+                ViewModelFactory(HomeViewModel(it))
+            )[HomeViewModel::class.java]
         } ?: logger.logError("Null user id after auth")
     }
 
@@ -58,28 +67,42 @@ class HomeActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        when (item.itemId) {
             R.id.logoutButton -> logout()
         }
         return true
     }
 
+    @ExperimentalCoroutinesApi
     private fun initViewPager() {
-        val adapter = FragmentAdapter(supportFragmentManager, lifecycle, object : ChatFragment.ChatFragmentHostListener{
-            override fun onChatItemClicked(selectedUser: User) {
-                val intent = Intent(this@HomeActivity, PeerChatActivity::class.java)
-                intent.putExtra(PeerChatActivity.ARG_USER_RECEIVER, selectedUser)
-                intent.putExtra(PeerChatActivity.ARG_USER_SENDER, homeViewModel.currentUser)
-                startActivity(intent)
-            }
-        })
+        val adapter = FragmentAdapter(
+            supportFragmentManager,
+            lifecycle,
+            object : ChatFragmentHostListener<Any> {
+                override fun onChatItemClicked(selectedEntity: Any) {
+                    if (selectedEntity is User) {
+                        val intent = Intent(this@HomeActivity, PeerChatActivity::class.java)
+                        intent.putExtra(PeerChatActivity.ARG_USER_RECEIVER, selectedEntity)
+                        intent.putExtra(PeerChatActivity.ARG_USER_SENDER, homeViewModel.currentUser)
+                        startActivity(intent)
+                    } else if (selectedEntity is Group) {
+                        val intent = Intent(this@HomeActivity, GroupChatActivity::class.java)
+                        intent.putExtra(
+                            GroupChatActivity.ARG_USER_SENDER,
+                            homeViewModel.currentUser
+                        )
+                        intent.putExtra(GroupChatActivity.ARG_GROUP, selectedEntity)
+                        startActivity(intent)
+                    }
+                }
+            })
         val viewPager = binding.viewPager
         val tabLayout = binding.tabLayout
         viewPager.adapter = adapter
         tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.chats_tab_text)))
         tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.group_chats_tab_text)))
 
-        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 tab?.let { viewPager.currentItem = it.position }
             }
@@ -121,7 +144,7 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun logout(){
+    private fun logout() {
         homeViewModel.logout()
     }
 }

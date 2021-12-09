@@ -1,30 +1,31 @@
 package com.example.chatapp.firebase
 
-import android.util.Log
 import com.example.chatapp.common.logger.Logger
 import com.example.chatapp.common.logger.LoggerImpl
+import com.example.chatapp.data.models.DbGroup
+import com.example.chatapp.data.models.DbGroup.Companion.GROUP_CHANNEL
+import com.example.chatapp.data.models.DbGroup.Companion.GROUP_MEM
+import com.example.chatapp.data.models.DbGroup.Companion.GROUP_NAME
 import com.example.chatapp.data.models.DbMessage
 import com.example.chatapp.data.models.DbMessage.Companion.CONTENT
 import com.example.chatapp.data.models.DbMessage.Companion.CONTENT_TYPE
-import com.example.chatapp.data.models.DbMessage.Companion.RECEIVER_ID
 import com.example.chatapp.data.models.DbMessage.Companion.SENDER_ID
 import com.example.chatapp.data.models.DbMessage.Companion.TIMESTAMP
 import com.example.chatapp.data.models.DbUser
+import com.example.chatapp.data.models.DbUser.Companion.FIREBASE_MESSAGE_TOKEN
 import com.example.chatapp.data.models.DbUser.Companion.USER_NAME
 import com.example.chatapp.data.models.DbUser.Companion.USER_PHONE
+import com.example.chatapp.data.wrappers.Group
 import com.example.chatapp.data.wrappers.Message
 import com.example.chatapp.data.wrappers.User
 import com.google.firebase.FirebaseException
 import com.google.firebase.firestore.DocumentChange
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.*
-import java.lang.Error
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlin.coroutines.suspendCoroutine
 
 class FirebaseDb {
@@ -32,15 +33,16 @@ class FirebaseDb {
     private val logger: Logger = LoggerImpl("FirebaseDb")
 
     companion object {
-        private const val USER_COLLECTION = "users"
-        private const val CHANNEL_COLLECTION = "channels"
-        private const val MESSAGE_COLLECTION = "messages"
-        private const val CONTENT_TEXT = "text/plain"
+        const val USER_COLLECTION = "users"
+        const val CHANNEL_COLLECTION = "channels"
+        const val MESSAGE_COLLECTION = "messages"
+        const val GROUP_COLLECTION = "groups"
+        const val CONTENT_TEXT = "text/plain"
     }
 
     suspend fun addUserToDatabase(user: User): Boolean {
         return suspendCoroutine {
-            val dbUser = DbUser(user.name, user.phone)
+            val dbUser = DbUser(user.name, user.phone, user.messageToken)
             fireStore.collection(USER_COLLECTION).document(user.id).set(dbUser)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
@@ -69,8 +71,9 @@ class FirebaseDb {
                                 snapshot.data as HashMap
                                 val user = User(
                                     uid,
-                                    snapshot["name"].toString(),
-                                    snapshot["phone"].toString()
+                                    snapshot[USER_NAME].toString(),
+                                    snapshot[USER_PHONE].toString(),
+                                    messageToken = snapshot[FIREBASE_MESSAGE_TOKEN].toString()
                                 )
                                 continuation.resumeWith(Result.success(user))
                             }
@@ -93,9 +96,11 @@ class FirebaseDb {
         receiverId: String,
     ): Flow<Message?> {
         return callbackFlow {
-            val channelId = getChannelId(senderId, receiverId)
+            val channelId =
+                if (receiverId.isEmpty()) senderId else getChannelId(senderId, receiverId)
             val ref = fireStore.collection(CHANNEL_COLLECTION).document(channelId)
-                .collection(MESSAGE_COLLECTION).orderBy(TIMESTAMP).addSnapshotListener { snapshot, e ->
+                .collection(MESSAGE_COLLECTION).orderBy(TIMESTAMP)
+                .addSnapshotListener { snapshot, e ->
                     if (e != null) {
                         this.trySend(null).isFailure
                         e.printStackTrace()
@@ -107,7 +112,6 @@ class FirebaseDb {
                                     i.document.data.let { data ->
                                         val message = Message(
                                             data[SENDER_ID].toString(),
-                                            data[RECEIVER_ID].toString(),
                                             data[CONTENT].toString(),
                                             data[CONTENT_TYPE].toString(),
                                             data[TIMESTAMP] as Long
@@ -125,20 +129,15 @@ class FirebaseDb {
         }
     }
 
-    suspend fun sendTextMessage(senderId: String, receiverId: String, message: String): String {
-        val channelId = getChannelId(senderId, receiverId)
-        val messageData = DbMessage(
-            senderId,
-            receiverId,
-            message,
-            CONTENT_TEXT,
-            System.currentTimeMillis()
-        )
+    suspend fun sendTextMessage(
+        channelId: String,
+        message: DbMessage,
+    ): String {
         return suspendCoroutine {
             fireStore.collection(CHANNEL_COLLECTION).document(channelId).collection(
                 MESSAGE_COLLECTION
             )
-                .add(messageData).addOnCompleteListener { task ->
+                .add(message).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         task.result?.let { ref ->
                             it.resumeWith(Result.success(ref.id))
@@ -154,7 +153,7 @@ class FirebaseDb {
         }
     }
 
-    private fun getChannelId(senderId: String, receiverId: String): String {
+    fun getChannelId(senderId: String, receiverId: String): String {
         return if (senderId < receiverId) {
             senderId + "_" + receiverId
         } else {
@@ -191,6 +190,61 @@ class FirebaseDb {
         }
         awaitClose {
             ref.remove()
+        }
+    }
+
+    suspend fun createGroup(groupName: String, members: ArrayList<User>): String {
+        return suspendCoroutine {
+            val channelId = fireStore.collection(CHANNEL_COLLECTION).document().id
+            val memberIds = ArrayList<String>()
+            members.forEach {
+                memberIds.add(it.id)
+            }
+            val dbGroup = DbGroup(groupName, channelId, memberIds)
+            fireStore.collection(GROUP_COLLECTION).add(dbGroup).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    task.result?.let { ref ->
+                        it.resumeWith(Result.success(ref.id))
+                    }
+                } else {
+                    it.resumeWith(
+                        Result.failure(
+                            task.exception ?: Exception("Something went wrong")
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    fun getAllGroups(userId: String): Flow<ArrayList<Group>> {
+        return callbackFlow {
+            val ref = fireStore.collection(GROUP_COLLECTION).whereArrayContains(GROUP_MEM, userId)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        logger.logError("Listener attach failed")
+                    } else {
+                        val groups = ArrayList<Group>()
+                        snapshot?.let {
+                            for (i in it.documents) {
+                                i.data?.let { data ->
+                                    val group = Group(
+                                        i.id,
+                                        data[GROUP_NAME].toString(),
+                                        data[GROUP_CHANNEL].toString(),
+                                        data[GROUP_MEM] as ArrayList<String>
+                                    )
+                                    groups.add(group)
+                                }
+                            }
+                            this.trySend(groups).isSuccess
+                        }
+                    }
+                }
+            awaitClose {
+                ref.remove()
+            }
         }
     }
 }

@@ -21,4 +21,11 @@
     <string name="send_message_hint">Type a message</string>
     <string name="Empty_message_error">Please enter a message</string>
     <string name="message_placeholder">message</string>
+    <string name="new_group_fab_text">new group</string>
+    <string name="new_group_sub_title">Add members</string>
+    <string name="new_group_title">New Group</string>
+    <string name="create_group_button_text">Create Group</string>
+    <string name="empty_group_name_error_text">Please enter a group name</string>
+    <string name="empty_selected_members_error_text">Please select group members</string>
+    <string name="new_group_name_hint">Type group name here</string>
 </resources>

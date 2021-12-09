@@ -9,9 +9,9 @@ import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.chatapp.R
-import com.example.chatapp.common.logger.LoggerImpl
 import com.example.chatapp.common.Utilities
 import com.example.chatapp.common.logger.Logger
+import com.example.chatapp.common.logger.LoggerImpl
 import com.example.chatapp.databinding.FragmentOtpBinding
 
 class OtpFragment : Fragment(R.layout.fragment_otp) {
