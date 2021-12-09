@@ -33,7 +33,7 @@
 
     <EditText
         android:id="@+id/sendMessageEditText"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/std_med"
         android:layout_marginTop="@dimen/std_small"

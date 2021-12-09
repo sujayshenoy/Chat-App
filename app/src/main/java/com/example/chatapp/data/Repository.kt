@@ -2,8 +2,10 @@ package com.example.chatapp.data
 
 import com.example.chatapp.common.logger.Logger
 import com.example.chatapp.common.logger.LoggerImpl
+import com.example.chatapp.data.models.DbMessage
 import com.example.chatapp.data.repoInterfaces.MessageRepository
 import com.example.chatapp.data.repoInterfaces.UserRepository
+import com.example.chatapp.data.wrappers.Group
 import com.example.chatapp.data.wrappers.Message
 import com.example.chatapp.data.wrappers.User
 import com.example.chatapp.firebase.FirebaseDb
@@ -22,7 +24,7 @@ class Repository : UserRepository, MessageRepository {
             return@withContext try {
                 firebaseDatabase.addUserToDatabase(user)
             } catch (ex: Exception) {
-                logger.logInfo("FireStore Exception")
+                logger.logError("FireStore Exception")
                 ex.printStackTrace()
                 false
             }
@@ -34,7 +36,7 @@ class Repository : UserRepository, MessageRepository {
             return@withContext try {
                 firebaseDatabase.getUserFromDatabase(userId)
             } catch (ex: Exception) {
-                logger.logInfo("FireStore Exception")
+                logger.logError("FireStore Exception")
                 ex.printStackTrace()
                 null
             }
@@ -42,16 +44,30 @@ class Repository : UserRepository, MessageRepository {
     }
 
     @ExperimentalCoroutinesApi
-    fun getAllUsers(userId: String ): Flow<ArrayList<User>> {
+    fun getAllUsers(userId: String): Flow<ArrayList<User>> {
         return firebaseDatabase.getAllUsersFromDatabase(userId)
     }
 
-    override suspend fun sendMessage(senderId: String, receiverId: String, message: String): String {
+    suspend fun sendMessage(
+        senderId: String,
+        receiverId: String,
+        channelId: String = "",
+        message: String
+    ): String {
         return withContext(Dispatchers.IO) {
             return@withContext try {
-                firebaseDatabase.sendTextMessage(senderId, receiverId, message)
+                val messageData = DbMessage(
+                    senderId,
+                    message,
+                    FirebaseDb.CONTENT_TEXT,
+                    System.currentTimeMillis()
+                )
+                val channel = if(channelId.isEmpty()) {
+                    firebaseDatabase.getChannelId(senderId, receiverId)
+                } else channelId
+                firebaseDatabase.sendTextMessage(channel, messageData)
             } catch (ex: Exception) {
-                logger.logInfo("FireStore Exception")
+                logger.logError("FireStore Exception")
                 ex.printStackTrace()
                 ""
             }
@@ -59,7 +75,33 @@ class Repository : UserRepository, MessageRepository {
     }
 
     @ExperimentalCoroutinesApi
-    fun getMessage(senderId: String, receiverId: String): Flow<Message?> {
+    fun getMessages(senderId: String, receiverId: String): Flow<Message?> {
         return firebaseDatabase.getAllMessages(senderId, receiverId)
+    }
+
+    suspend fun sendGroupMessage(senderId: String, channelId: String, message: String): String {
+        return sendMessage(senderId, "" , channelId, message)
+    }
+
+    @ExperimentalCoroutinesApi
+    fun getGroupMessages(channelId: String): Flow<Message?> {
+        return getMessages(channelId, "")
+    }
+
+    suspend fun createGroup(groupName: String, members: ArrayList<User>): String {
+        return withContext(Dispatchers.IO) {
+            return@withContext try {
+                firebaseDatabase.createGroup(groupName, members)
+            } catch (ex: Exception) {
+                logger.logError("firestore exception")
+                ex.printStackTrace()
+                ""
+            }
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    fun getAllGroups(userId: String): Flow<ArrayList<Group>> {
+        return firebaseDatabase.getAllGroups(userId)
     }
 }

@@ -14,12 +14,14 @@ import com.example.chatapp.common.logger.LoggerImpl
 import com.example.chatapp.common.sharedpreferences.SharedPrefUtil
 import com.example.chatapp.common.sharedpreferences.SharedPrefUtil.Companion.USER_ID
 import com.example.chatapp.common.sharedpreferences.SharedPrefUtilImpl
+import com.example.chatapp.data.wrappers.Group
 import com.example.chatapp.data.wrappers.User
 import com.example.chatapp.databinding.ActivityHomeBinding
 import com.example.chatapp.ui.authentication.AuthenticationActivity
-import com.example.chatapp.ui.home.chat.ChatFragment
+import com.example.chatapp.ui.groupChat.GroupChatActivity
 import com.example.chatapp.ui.peerchat.PeerChatActivity
 import com.google.android.material.tabs.TabLayout
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
@@ -45,6 +47,7 @@ class HomeActivity : AppCompatActivity() {
         initObservers()
     }
 
+    @ExperimentalCoroutinesApi
     private fun initViewModel() {
         val uid = sharedPrefUtil.getString(USER_ID)
         uid?.let {
@@ -64,13 +67,22 @@ class HomeActivity : AppCompatActivity() {
         return true
     }
 
+    @ExperimentalCoroutinesApi
     private fun initViewPager() {
-        val adapter = FragmentAdapter(supportFragmentManager, lifecycle, object : ChatFragment.ChatFragmentHostListener{
-            override fun onChatItemClicked(selectedUser: User) {
-                val intent = Intent(this@HomeActivity, PeerChatActivity::class.java)
-                intent.putExtra(PeerChatActivity.ARG_USER_RECEIVER, selectedUser)
-                intent.putExtra(PeerChatActivity.ARG_USER_SENDER, homeViewModel.currentUser)
-                startActivity(intent)
+        val adapter = FragmentAdapter(supportFragmentManager, lifecycle, object : ChatFragmentHostListener<Any>{
+            override fun onChatItemClicked(selectedEntity: Any) {
+                if(selectedEntity is User){
+                    val intent = Intent(this@HomeActivity, PeerChatActivity::class.java)
+                    intent.putExtra(PeerChatActivity.ARG_USER_RECEIVER, selectedEntity)
+                    intent.putExtra(PeerChatActivity.ARG_USER_SENDER, homeViewModel.currentUser)
+                    startActivity(intent)
+                }
+                else if(selectedEntity is Group){
+                    val intent = Intent(this@HomeActivity, GroupChatActivity::class.java)
+                    intent.putExtra(GroupChatActivity.ARG_USER_SENDER, homeViewModel.currentUser)
+                    intent.putExtra(GroupChatActivity.ARG_GROUP, selectedEntity)
+                    startActivity(intent)
+                }
             }
         })
         val viewPager = binding.viewPager

@@ -1,4 +1,4 @@
-package com.example.chatapp.ui.home.chat
+package com.example.chatapp.ui.home
 
 interface RecyclerItemClickListener {
     fun onItemClick(position: Int)

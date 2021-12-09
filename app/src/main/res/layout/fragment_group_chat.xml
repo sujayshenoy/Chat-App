@@ -1,15 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.home.groupchat.GroupChatFragment"
-    android:background="@color/primary_dark">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.home.groups.GroupsFragment">
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/groupChatsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Group Chats"
-        android:textSize="@dimen/std_large_text"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
 
-</FrameLayout>
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/newGroupButton"
+        app:icon="@drawable/ic_add"
+        app:iconTint="@color/primary_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="@dimen/fab_margin"
+        android:text="@string/new_group_fab_text"
+        android:textColor="@color/primary_text"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>

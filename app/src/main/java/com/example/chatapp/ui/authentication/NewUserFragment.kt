@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.chatapp.R
 import com.example.chatapp.common.logger.Logger
 import com.example.chatapp.common.logger.LoggerImpl
+import com.example.chatapp.common.sharedpreferences.SharedPrefUtilImpl
 import com.example.chatapp.data.wrappers.User
 import com.example.chatapp.databinding.FragmentNewUserBinding
 
@@ -49,7 +50,15 @@ class NewUserFragment : Fragment(R.layout.fragment_new_user) {
                 it.animate().scaleX(1f).scaleY(1f).setDuration(animDuration).withEndAction {
                     var userName = binding.userNameTextEdit.text.toString()
                     user.name = if (userName.isEmpty()) user.phone else userName
-                    authenticationViewModel.addUserToDb(user)
+                    authenticationViewModel.addUserToDb(
+                        user.copy(
+                            messageToken = context?.let { context ->
+                                SharedPrefUtilImpl(
+                                    context
+                                ).getString("firebaseMessagingToken")
+                            } ?: ""
+                        )
+                    )
                     authenticationViewModel.getUserFromDB(user.id)
                 }.start()
             }.start()

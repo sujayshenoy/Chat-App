@@ -3,10 +3,14 @@
     <dimen name="std_small">8dp</dimen>
     <dimen name="std_med">16dp</dimen>
     <dimen name="std_large">32dp</dimen>
+    <dimen name="std_x_small_text">12sp</dimen>
     <dimen name="std_small_text">16sp</dimen>
     <dimen name="std_med_text">18sp</dimen>
     <dimen name="std_large_text">24sp</dimen>
     <dimen name="login_phone_input_text_size">18sp</dimen>
     <dimen name="auth_submit_button_size">24sp</dimen>
     <dimen name="round_corner_size">20dp</dimen>
+    <dimen name="std_x_small">4dp</dimen>
+    <dimen name="new_group_member_text_size">20sp</dimen>
+    <dimen name="fab_margin">18dp</dimen>
 </resources>
