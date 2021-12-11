@@ -52,6 +52,17 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
+        android:id="@+id/sendImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/std_med"
+        android:background="@drawable/ic_camera"
+        app:layout_constraintBottom_toBottomOf="@id/sendMessageEditText"
+        app:layout_constraintDimensionRatio="w, 1:1"
+        app:layout_constraintEnd_toEndOf="@id/sendMessageEditText"
+        app:layout_constraintTop_toTopOf="@id/sendMessageEditText" />
+
+    <ImageButton
         android:id="@+id/sendMessageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
