@@ -1,5 +1,7 @@
 package com.example.chatapp.data.repo
 
+import com.example.chatapp.common.CONTENT_TYPE_IMG
+import com.example.chatapp.common.CONTENT_TYPE_TEXT
 import com.example.chatapp.common.logger.Logger
 import com.example.chatapp.common.logger.LoggerImpl
 import com.example.chatapp.data.models.DbMessage
@@ -10,6 +12,7 @@ import com.example.chatapp.data.wrappers.Group
 import com.example.chatapp.data.wrappers.Message
 import com.example.chatapp.data.wrappers.User
 import com.example.chatapp.firebase.FirebaseDb
+import com.example.chatapp.firebase.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -17,6 +20,7 @@ import java.lang.Exception
 
 class Repository : UserRepository, MessageRepository, GroupRepository {
     private val firebaseDatabase = FirebaseDb()
+    private val firebaseStorage = FirebaseStorage()
     private val logger: Logger = LoggerImpl("Repository")
 
     override suspend fun addUserToDB(user: User): Boolean {
@@ -66,7 +70,7 @@ class Repository : UserRepository, MessageRepository, GroupRepository {
         }
     }
 
-    override suspend fun sendMessage(
+    override suspend fun sendTextMessage(
         senderId: String,
         receiverId: String,
         channelId: String,
@@ -77,13 +81,13 @@ class Repository : UserRepository, MessageRepository, GroupRepository {
                 val messageData = DbMessage(
                     senderId,
                     message,
-                    FirebaseDb.CONTENT_TEXT,
+                    CONTENT_TYPE_TEXT,
                     System.currentTimeMillis()
                 )
                 val channel = if (channelId.isEmpty()) {
                     firebaseDatabase.getChannelId(senderId, receiverId)
                 } else channelId
-                firebaseDatabase.sendTextMessage(channel, messageData)
+                firebaseDatabase.sendMessage(channel, messageData)
             } catch (ex: Exception) {
                 logger.logError("FireStore Exception")
                 ex.printStackTrace()
@@ -96,12 +100,12 @@ class Repository : UserRepository, MessageRepository, GroupRepository {
         return firebaseDatabase.getAllMessages(senderId, receiverId)
     }
 
-    override suspend fun sendGroupMessage(
+    override suspend fun sendGroupTextMessage(
         senderId: String,
         channelId: String,
         message: String
     ): String {
-        return sendMessage(senderId, "", channelId, message)
+        return sendTextMessage(senderId, "", channelId, message)
     }
 
     override fun getGroupMessages(channelId: String): Flow<Message?> {
@@ -122,5 +126,40 @@ class Repository : UserRepository, MessageRepository, GroupRepository {
 
     override fun getAllGroups(userId: String): Flow<ArrayList<Group>> {
         return firebaseDatabase.getAllGroups(userId)
+    }
+
+    override suspend fun sendImageMessage(
+        senderId: String,
+        receiverId: String,
+        channelId: String,
+        imgByteArray: ByteArray
+    ): String {
+        return withContext(Dispatchers.IO) {
+            return@withContext try {
+                val channel = if (channelId.isEmpty()) {
+                    firebaseDatabase.getChannelId(senderId, receiverId)
+                } else channelId
+                val imgUrl = firebaseStorage.uploadChannelImage(channel, imgByteArray)
+                val messageData = DbMessage(
+                    senderId,
+                    imgUrl,
+                    CONTENT_TYPE_IMG,
+                    System.currentTimeMillis()
+                )
+                firebaseDatabase.sendMessage(channel, messageData)
+            } catch (ex: Exception) {
+                logger.logError("firestore exception")
+                ex.printStackTrace()
+                ""
+            }
+        }
+    }
+
+    override suspend fun sendGroupImageMessage(
+        senderId: String,
+        channelId: String,
+        imgByteArray: ByteArray
+    ): String {
+        return sendImageMessage(senderId, "", channelId, imgByteArray)
     }
 }

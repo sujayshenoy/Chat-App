@@ -37,7 +37,6 @@ class FirebaseDb {
         const val CHANNEL_COLLECTION = "channels"
         const val MESSAGE_COLLECTION = "messages"
         const val GROUP_COLLECTION = "groups"
-        const val CONTENT_TEXT = "text/plain"
     }
 
     suspend fun addUserToDatabase(user: User): Boolean {
@@ -129,7 +128,7 @@ class FirebaseDb {
         }
     }
 
-    suspend fun sendTextMessage(
+    suspend fun sendMessage(
         channelId: String,
         message: DbMessage,
     ): String {

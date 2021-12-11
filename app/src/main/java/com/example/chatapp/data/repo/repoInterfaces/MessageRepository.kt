@@ -4,14 +4,24 @@ import com.example.chatapp.data.wrappers.Message
 import kotlinx.coroutines.flow.Flow
 
 interface MessageRepository {
-    suspend fun sendMessage(
+    suspend fun sendTextMessage(
         senderId: String,
         receiverId: String,
         channelId: String,
         message: String
     ): String
-
     fun getMessages(senderId: String, receiverId: String): Flow<Message?>
-    suspend fun sendGroupMessage(senderId: String, channelId: String, message: String): String
+    suspend fun sendGroupTextMessage(senderId: String, channelId: String, message: String): String
     fun getGroupMessages(channelId: String): Flow<Message?>
+    suspend fun sendImageMessage(
+        senderId: String,
+        receiverId: String,
+        channelId: String,
+        imgByteArray: ByteArray
+    ): String
+    suspend fun sendGroupImageMessage(
+        senderId: String,
+        channelId: String,
+        imgByteArray: ByteArray
+    ): String
 }

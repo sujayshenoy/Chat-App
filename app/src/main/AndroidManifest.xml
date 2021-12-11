@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.chatapp">
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -38,6 +39,10 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.home.newgroup.NewGroupActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.home.peerchat.SendImageActivity"
             android:exported="true"
             android:screenOrientation="portrait"/>
     </application>

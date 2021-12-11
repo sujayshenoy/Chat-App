@@ -21,6 +21,7 @@ class ChatsRecyclerAdapter(private val userList: ArrayList<User>) :
 
     override fun onBindViewHolder(holder: EntityViewHolder, position: Int) {
         val currentUser = userList[position]
+        holder.entityAvatar.setImageResource(R.drawable.ic_user_avatar_placeholder)
         holder.entityName.text = currentUser.name
     }
 

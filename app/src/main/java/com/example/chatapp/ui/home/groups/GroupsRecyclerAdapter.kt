@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapp.R
 import com.example.chatapp.data.wrappers.Group
-import com.example.chatapp.ui.home.common.viewholders.EntityViewHolder
 import com.example.chatapp.ui.home.common.listeners.RecyclerItemClickListener
+import com.example.chatapp.ui.home.common.viewholders.EntityViewHolder
 
 class GroupsRecyclerAdapter(private val groupList: ArrayList<Group>) :
     RecyclerView.Adapter<EntityViewHolder>() {
@@ -21,6 +21,7 @@ class GroupsRecyclerAdapter(private val groupList: ArrayList<Group>) :
 
     override fun onBindViewHolder(holder: EntityViewHolder, position: Int) {
         val currentGroup = groupList[position]
+        holder.entityAvatar.setImageResource(R.drawable.ic_group_avatar_placeholder)
         holder.entityName.text = currentGroup.name
     }
 

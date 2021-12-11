@@ -1,13 +1,18 @@
 package com.example.chatapp.ui.home.peerchat
 
+import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.chatapp.R
+import com.example.chatapp.common.CONTENT_TYPE_TEXT
 import com.example.chatapp.data.wrappers.Message
 import com.example.chatapp.ui.home.common.viewholders.ChatViewHolder
 
 class ChatRecyclerAdapter(
+    private val context: Context,
     private val messageList: ArrayList<Message>,
     private val senderId: String
 ) : RecyclerView.Adapter<ChatViewHolder>() {
@@ -26,7 +31,20 @@ class ChatRecyclerAdapter(
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
         val currentMessage = messageList[position]
-        holder.message.text = currentMessage.content
+        if (currentMessage.contentType == CONTENT_TYPE_TEXT) {
+            holder.message.text = currentMessage.content
+            holder.message.visibility = View.VISIBLE
+            holder.messageImage.visibility = View.GONE
+        } else {
+            holder.message.visibility = View.GONE
+            holder.messageImage.visibility = View.VISIBLE
+            Glide
+                .with(context)
+                .load(currentMessage.content)
+                .fitCenter()
+                .thumbnail(Glide.with(context).load(R.drawable.spinning_loading))
+                .into(holder.messageImage)
+        }
     }
 
     override fun getItemViewType(position: Int): Int {

@@ -1,18 +1,30 @@
 package com.example.chatapp.ui.home.groupChat
 
+import android.Manifest
 import android.app.Dialog
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatapp.R
+import com.example.chatapp.common.IMAGE_CONFIRM_REQUEST_CODE
+import com.example.chatapp.common.PICK_IMAGE_FROM_GALLERY_REQUEST_CODE
+import com.example.chatapp.common.STORAGE_PERMISSION_REQUEST_CODE
 import com.example.chatapp.common.logger.Logger
 import com.example.chatapp.common.logger.LoggerImpl
 import com.example.chatapp.data.wrappers.Group
 import com.example.chatapp.data.wrappers.User
 import com.example.chatapp.databinding.ActivityChatScreenBinding
 import com.example.chatapp.ui.home.common.viewmodel.ViewModelFactory
+import com.example.chatapp.ui.home.peerchat.SendImageActivity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import java.io.ByteArrayOutputStream
 
 class GroupChatActivity : AppCompatActivity() {
     private lateinit var binding: ActivityChatScreenBinding
@@ -48,9 +60,44 @@ class GroupChatActivity : AppCompatActivity() {
         initObservers()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == PICK_IMAGE_FROM_GALLERY_REQUEST_CODE && data != null) {
+            data.data?.let {
+                handleImageData(it)
+            }
+        }
+
+        if (requestCode == IMAGE_CONFIRM_REQUEST_CODE && data != null) {
+            data.extras?.let {
+                it.getByteArray(SendImageActivity.SELECTED_IMAGE)?.let {
+                    groupChatViewModel.sendImageMessage(sender.id, it)
+                }
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == STORAGE_PERMISSION_REQUEST_CODE && grantResults.isNotEmpty()) {
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                logger.logInfo("Storage Permission Granted")
+            } else {
+                logger.logInfo("Permission Denied")
+            }
+        }
+    }
+
     @ExperimentalCoroutinesApi
     private fun initRecyclerView() {
         adapter = GroupChatRecyclerAdapter(
+            this@GroupChatActivity,
             groupChatViewModel.messageList,
             groupChatViewModel.memberList,
             sender.id
@@ -81,6 +128,17 @@ class GroupChatActivity : AppCompatActivity() {
         }
     }
 
+    private fun handleImageData(imageUri: Uri) {
+        val inputStream = contentResolver.openInputStream(imageUri)
+        val bitmap = BitmapFactory.decodeStream(inputStream)
+        val baos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.WEBP, 100, baos)
+        val byteArray = baos.toByteArray()
+        val intent = Intent(this@GroupChatActivity, SendImageActivity::class.java)
+        intent.putExtra(SendImageActivity.SELECTED_IMAGE, byteArray)
+        startActivityForResult(intent, IMAGE_CONFIRM_REQUEST_CODE)
+    }
+
     @ExperimentalCoroutinesApi
     private fun initClickListeners() {
         binding.sendMessageButton.setOnClickListener {
@@ -96,6 +154,23 @@ class GroupChatActivity : AppCompatActivity() {
         binding.toolbar.setNavigationOnClickListener {
             finish()
         }
+
+        binding.sendImageButton.setOnClickListener {
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                pickImage()
+            } else {
+                logger.logInfo("Requesting Permission")
+                requestPermissions(
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                    STORAGE_PERMISSION_REQUEST_CODE
+                )
+            }
+        }
+    }
+
+    private fun pickImage() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(intent, PICK_IMAGE_FROM_GALLERY_REQUEST_CODE)
     }
 
     private fun getDataFromIntent() {

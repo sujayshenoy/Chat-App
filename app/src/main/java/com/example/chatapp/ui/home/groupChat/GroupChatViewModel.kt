@@ -34,7 +34,17 @@ class GroupChatViewModel(private val group: Group) : ViewModel() {
 
     fun sendMessage(senderId: String, message: String) {
         viewModelScope.launch {
-            repository.sendGroupMessage(senderId, group.channelId, message).let {
+            repository.sendGroupTextMessage(senderId, group.channelId, message).let {
+                if (it.isNotEmpty()) {
+                    _sendMessageStatus.postValue(it)
+                }
+            }
+        }
+    }
+
+    fun sendImageMessage(senderId: String, imgByteArray: ByteArray) {
+        viewModelScope.launch {
+            repository.sendGroupImageMessage(senderId, group.channelId, imgByteArray).let {
                 if (it.isNotEmpty()) {
                     _sendMessageStatus.postValue(it)
                 }
