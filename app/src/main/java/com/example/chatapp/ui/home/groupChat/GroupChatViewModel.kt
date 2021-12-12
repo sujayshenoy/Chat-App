@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.chatapp.common.CONTENT_TYPE_TEXT
 import com.example.chatapp.data.repo.Repository
 import com.example.chatapp.data.wrappers.Group
 import com.example.chatapp.data.wrappers.Message
@@ -18,8 +19,8 @@ class GroupChatViewModel(private val group: Group) : ViewModel() {
     val messageList = ArrayList<Message>()
     val memberList = ArrayList<User>()
 
-    private val _sendMessageStatus = MutableLiveData<String>()
-    val sendMessageStatus = _sendMessageStatus as LiveData<String>
+    private val _sendMessageStatus = MutableLiveData<Message>()
+    val sendMessageStatus = _sendMessageStatus as LiveData<Message>
 
     private val _newMessageStatus = MutableLiveData<Boolean>()
     val newMessageStatus = _newMessageStatus as LiveData<Boolean>
@@ -35,7 +36,7 @@ class GroupChatViewModel(private val group: Group) : ViewModel() {
     fun sendMessage(senderId: String, message: String) {
         viewModelScope.launch {
             repository.sendGroupTextMessage(senderId, group.channelId, message).let {
-                if (it.isNotEmpty()) {
+                if (it != null) {
                     _sendMessageStatus.postValue(it)
                 }
             }
@@ -45,7 +46,7 @@ class GroupChatViewModel(private val group: Group) : ViewModel() {
     fun sendImageMessage(senderId: String, imgByteArray: ByteArray) {
         viewModelScope.launch {
             repository.sendGroupImageMessage(senderId, group.channelId, imgByteArray).let {
-                if (it.isNotEmpty()) {
+                if (it != null) {
                     _sendMessageStatus.postValue(it)
                 }
             }
@@ -69,6 +70,20 @@ class GroupChatViewModel(private val group: Group) : ViewModel() {
             repository.getUsersFromUserIds(group.members).let {
                 memberList.addAll(it)
                 _fetchMemberListStatus.postValue(true)
+            }
+        }
+    }
+
+    fun sendPushNotification(title: String, message: Message) {
+        val memberTokens = ArrayList<String>()
+        memberList.forEach {
+            memberTokens.add(it.messageToken)
+        }
+        viewModelScope.launch {
+            if (message.contentType == CONTENT_TYPE_TEXT) {
+                repository.sendPushNotificationToGroup(memberTokens, title, message.content, "")
+            } else {
+                repository.sendPushNotificationToGroup(memberTokens, title, "", message.content)
             }
         }
     }

@@ -9,6 +9,7 @@ import com.example.chatapp.common.Utilities
 import com.example.chatapp.common.logger.Logger
 import com.example.chatapp.common.logger.LoggerImpl
 import com.example.chatapp.common.sharedpreferences.SharedPrefUtil
+import com.example.chatapp.common.sharedpreferences.SharedPrefUtil.Companion.MESSAGE_TOKEN
 import com.example.chatapp.common.sharedpreferences.SharedPrefUtil.Companion.USER_ID
 import com.example.chatapp.common.sharedpreferences.SharedPrefUtilImpl
 import com.example.chatapp.databinding.ActivityAuthenticationBinding
@@ -24,6 +25,7 @@ class AuthenticationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAuthenticationBinding.inflate(layoutInflater)
+        sharedPref = SharedPrefUtilImpl(this@AuthenticationActivity)
         setContentView(binding.root)
         logger = LoggerImpl("Authentication Activity")
         authenticationViewModel =
@@ -45,7 +47,12 @@ class AuthenticationActivity : AppCompatActivity() {
                 if (user.isNewUser) {
                     goToNewUserFragment()
                 } else {
-                    authenticationViewModel.getUserFromDB(user.id)
+                    authenticationViewModel.getUserFromDB(
+                        user.id,
+                        sharedPref.getString(
+                            MESSAGE_TOKEN
+                        )
+                    )
                 }
             } else {
                 Utilities.displayLongToast(this@AuthenticationActivity, "Authentication Failed")

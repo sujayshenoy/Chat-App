@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatapp.R
+import com.example.chatapp.common.CONTENT_TYPE_TEXT
 import com.example.chatapp.common.IMAGE_CONFIRM_REQUEST_CODE
 import com.example.chatapp.common.PICK_IMAGE_FROM_GALLERY_REQUEST_CODE
 import com.example.chatapp.common.STORAGE_PERMISSION_REQUEST_CODE
@@ -125,6 +126,10 @@ class GroupChatActivity : AppCompatActivity() {
         groupChatViewModel.fetchMembeListStatus.observe(this@GroupChatActivity) {
             initRecyclerView()
             dialog.dismiss()
+        }
+
+        groupChatViewModel.sendMessageStatus.observe(this@GroupChatActivity) {
+            groupChatViewModel.sendPushNotification(sender.name, it)
         }
     }
 
