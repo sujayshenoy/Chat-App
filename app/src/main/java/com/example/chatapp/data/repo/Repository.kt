@@ -5,6 +5,9 @@ import com.example.chatapp.common.CONTENT_TYPE_TEXT
 import com.example.chatapp.common.logger.Logger
 import com.example.chatapp.common.logger.LoggerImpl
 import com.example.chatapp.data.models.DbMessage
+import com.example.chatapp.data.network.retrofit.PushContent
+import com.example.chatapp.data.network.retrofit.PushMessage
+import com.example.chatapp.data.network.retrofit.PushNotificationSenderService
 import com.example.chatapp.data.repo.repoInterfaces.GroupRepository
 import com.example.chatapp.data.repo.repoInterfaces.MessageRepository
 import com.example.chatapp.data.repo.repoInterfaces.UserRepository
@@ -22,6 +25,7 @@ class Repository : UserRepository, MessageRepository, GroupRepository {
     private val firebaseDatabase = FirebaseDb()
     private val firebaseStorage = FirebaseStorage()
     private val logger: Logger = LoggerImpl("Repository")
+    private val pushNotificationSenderService = PushNotificationSenderService()
 
     override suspend fun addUserToDB(user: User): Boolean {
         return withContext(Dispatchers.IO) {
@@ -31,6 +35,17 @@ class Repository : UserRepository, MessageRepository, GroupRepository {
                 logger.logError("FireStore Exception")
                 ex.printStackTrace()
                 false
+            }
+        }
+    }
+
+    suspend fun attachMessageTokenToUser(userId: String, token: String) {
+        return withContext(Dispatchers.IO) {
+            return@withContext try {
+                firebaseDatabase.attachMessageTokenToUser(userId, token)
+            } catch (ex: Exception) {
+                logger.logError("FireStore Exception")
+                ex.printStackTrace()
             }
         }
     }
@@ -75,7 +90,7 @@ class Repository : UserRepository, MessageRepository, GroupRepository {
         receiverId: String,
         channelId: String,
         message: String
-    ): String {
+    ): Message? {
         return withContext(Dispatchers.IO) {
             return@withContext try {
                 val messageData = DbMessage(
@@ -91,7 +106,7 @@ class Repository : UserRepository, MessageRepository, GroupRepository {
             } catch (ex: Exception) {
                 logger.logError("FireStore Exception")
                 ex.printStackTrace()
-                ""
+                null
             }
         }
     }
@@ -104,7 +119,7 @@ class Repository : UserRepository, MessageRepository, GroupRepository {
         senderId: String,
         channelId: String,
         message: String
-    ): String {
+    ): Message? {
         return sendTextMessage(senderId, "", channelId, message)
     }
 
@@ -133,7 +148,7 @@ class Repository : UserRepository, MessageRepository, GroupRepository {
         receiverId: String,
         channelId: String,
         imgByteArray: ByteArray
-    ): String {
+    ): Message? {
         return withContext(Dispatchers.IO) {
             return@withContext try {
                 val channel = if (channelId.isEmpty()) {
@@ -150,7 +165,7 @@ class Repository : UserRepository, MessageRepository, GroupRepository {
             } catch (ex: Exception) {
                 logger.logError("firestore exception")
                 ex.printStackTrace()
-                ""
+                null
             }
         }
     }
@@ -159,7 +174,35 @@ class Repository : UserRepository, MessageRepository, GroupRepository {
         senderId: String,
         channelId: String,
         imgByteArray: ByteArray
-    ): String {
+    ): Message? {
         return sendImageMessage(senderId, "", channelId, imgByteArray)
+    }
+
+    override suspend fun sendPushNotificationToUser(
+        userToken: String,
+        title: String,
+        message: String,
+        imageUrl: String
+    ) {
+        return withContext(Dispatchers.IO) {
+            val pushContent = PushContent(message, title, imageUrl)
+            val pushMessage = PushMessage(userToken, pushContent)
+            logger.logInfo(
+                pushNotificationSenderService.sendPushNotification(pushMessage).toString()
+            )
+        }
+    }
+
+    override suspend fun sendPushNotificationToGroup(
+        members: ArrayList<String>,
+        title: String,
+        message: String,
+        imageUrl: String
+    ) {
+        return withContext(Dispatchers.IO) {
+            for (i in members) {
+                sendPushNotificationToUser(i, title, message, imageUrl)
+            }
+        }
     }
 }

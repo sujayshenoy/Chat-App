@@ -24,7 +24,7 @@ class SplashActivity : AppCompatActivity() {
         splashIcon.animate().alpha(1f).setDuration(1500).setInterpolator(DecelerateInterpolator())
             .withEndAction {
                 if (SharedPrefUtilImpl.getInstance(this@SplashActivity)
-                        .getString(USER_ID) == null
+                        .getString(USER_ID).isEmpty()
                 ) {
                     val intent = Intent(this@SplashActivity, AuthenticationActivity::class.java)
                     startActivity(intent)

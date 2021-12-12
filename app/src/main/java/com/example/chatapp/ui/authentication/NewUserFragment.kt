@@ -1,7 +1,6 @@
 package com.example.chatapp.ui.authentication
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
@@ -9,6 +8,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.chatapp.R
 import com.example.chatapp.common.logger.Logger
 import com.example.chatapp.common.logger.LoggerImpl
+import com.example.chatapp.common.sharedpreferences.SharedPrefUtil
+import com.example.chatapp.common.sharedpreferences.SharedPrefUtil.Companion.MESSAGE_TOKEN
 import com.example.chatapp.common.sharedpreferences.SharedPrefUtilImpl
 import com.example.chatapp.data.wrappers.User
 import com.example.chatapp.databinding.FragmentNewUserBinding
@@ -16,7 +17,8 @@ import com.example.chatapp.databinding.FragmentNewUserBinding
 class NewUserFragment : Fragment(R.layout.fragment_new_user) {
     private lateinit var binding: FragmentNewUserBinding
     private lateinit var authenticationViewModel: AuthenticationViewModel
-    private lateinit var logger: Logger
+    private val logger: Logger = LoggerImpl("New User Fragment")
+    private lateinit var sharedPref: SharedPrefUtil
     private lateinit var user: User
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -24,8 +26,8 @@ class NewUserFragment : Fragment(R.layout.fragment_new_user) {
 
         binding = FragmentNewUserBinding.bind(view)
         context?.let {
-            logger = LoggerImpl("New User Fragment")
-        } ?: Log.e("NewUserFragment", "Empty Context")
+            sharedPref = SharedPrefUtilImpl(it)
+        } ?: logger.logError("Empty Context")
         activity?.let {
             authenticationViewModel = ViewModelProvider(it)[AuthenticationViewModel::class.java]
         } ?: logger.logError("Empty parent Activity")
@@ -59,7 +61,10 @@ class NewUserFragment : Fragment(R.layout.fragment_new_user) {
                             } ?: ""
                         )
                     )
-                    authenticationViewModel.getUserFromDB(user.id)
+                    authenticationViewModel.getUserFromDB(
+                        user.id,
+                        sharedPref.getString(MESSAGE_TOKEN)
+                    )
                 }.start()
             }.start()
         }

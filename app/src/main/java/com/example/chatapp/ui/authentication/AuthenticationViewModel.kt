@@ -18,6 +18,7 @@ class AuthenticationViewModel : ViewModel() {
     private var lastUsedPhone = ""
     private var storedVerificationId = ""
     private var storedRetryToken: PhoneAuthProvider.ForceResendingToken? = null
+    private val repository = Repository()
     var loggedInUser: User? = null
 
     private val _sendOtpStatus = MutableLiveData<Boolean>()
@@ -48,7 +49,6 @@ class AuthenticationViewModel : ViewModel() {
                     } else {
                         _resendOtpStatus.value = true
                     }
-//                        Utilities.displayShortToast(context, "Otp Sent to $phone")
                 }
 
                 PHONE_VERIFY_COMPLETE, PHONE_VERIFY_FAILED -> {
@@ -72,14 +72,18 @@ class AuthenticationViewModel : ViewModel() {
 
     fun addUserToDb(user: User) {
         viewModelScope.launch {
-            Repository().addUserToDB(user)
+            repository.addUserToDB(user)
         }
     }
 
-    fun getUserFromDB(uid: String) {
+    fun getUserFromDB(uid: String, token: String) {
         viewModelScope.launch {
-            Repository().getUserFromDB(uid).let {
-                _getUserFromDbStatus.postValue(it)
+            repository.getUserFromDB(uid).let {
+                if (it != null) {
+                    it.messageToken = token
+                    _getUserFromDbStatus.postValue(it)
+                    repository.attachMessageTokenToUser(uid, token)
+                }
             }
         }
     }

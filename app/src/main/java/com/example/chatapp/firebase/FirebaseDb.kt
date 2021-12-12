@@ -22,7 +22,7 @@ import com.google.firebase.FirebaseException
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -54,6 +54,18 @@ class FirebaseDb {
                             )
                         )
                     }
+                }
+        }
+    }
+
+    suspend fun attachMessageTokenToUser(userId: String, token: String) {
+        val data = mapOf(
+            FIREBASE_MESSAGE_TOKEN to token
+        )
+        return suspendCoroutine {
+            fireStore.collection(USER_COLLECTION).document(userId).update(data)
+                .addOnFailureListener { exception ->
+                    it.resumeWith(Result.failure(exception))
                 }
         }
     }
@@ -131,7 +143,7 @@ class FirebaseDb {
     suspend fun sendMessage(
         channelId: String,
         message: DbMessage,
-    ): String {
+    ): Message? {
         return suspendCoroutine {
             fireStore.collection(CHANNEL_COLLECTION).document(channelId).collection(
                 MESSAGE_COLLECTION
@@ -139,7 +151,13 @@ class FirebaseDb {
                 .add(message).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         task.result?.let { ref ->
-                            it.resumeWith(Result.success(ref.id))
+                            val messageData = Message(
+                                message.senderId,
+                                message.content,
+                                message.contentType,
+                                message.timeStamp
+                            )
+                            it.resumeWith(Result.success(messageData))
                         }
                     } else {
                         it.resumeWith(
@@ -177,7 +195,8 @@ class FirebaseDb {
                                 val user = User(
                                     i.id,
                                     data[USER_NAME].toString(),
-                                    data[USER_PHONE].toString()
+                                    data[USER_PHONE].toString(),
+                                    messageToken = data[FIREBASE_MESSAGE_TOKEN].toString()
                                 )
                                 userList.add(user)
                             }

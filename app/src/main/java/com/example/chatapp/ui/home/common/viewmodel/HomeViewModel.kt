@@ -60,6 +60,7 @@ class HomeViewModel(uid: String) : ViewModel() {
             repository.getAllUsers(userId).collect {
                 userList.clear()
                 userList.addAll(it)
+                logger.logInfo("UserList : $it")
                 _userListChanged.value = true
             }
         }
