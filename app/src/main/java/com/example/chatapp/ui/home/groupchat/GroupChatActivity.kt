@@ -1,4 +1,4 @@
-package com.example.chatapp.ui.home.groupChat
+package com.example.chatapp.ui.home.groupchat
 
 import android.Manifest
 import android.app.Dialog
@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatapp.R
-import com.example.chatapp.common.CONTENT_TYPE_TEXT
 import com.example.chatapp.common.IMAGE_CONFIRM_REQUEST_CODE
 import com.example.chatapp.common.PICK_IMAGE_FROM_GALLERY_REQUEST_CODE
 import com.example.chatapp.common.STORAGE_PERMISSION_REQUEST_CODE
@@ -56,7 +55,7 @@ class GroupChatActivity : AppCompatActivity() {
         dialog.setContentView(R.layout.progress_dialog)
         dialog.show()
 
-        binding.toolbar.title = group.name
+        binding.chatReceiverName.text = group.name
         initClickListeners()
         initObservers()
     }
@@ -129,7 +128,7 @@ class GroupChatActivity : AppCompatActivity() {
         }
 
         groupChatViewModel.sendMessageStatus.observe(this@GroupChatActivity) {
-            groupChatViewModel.sendPushNotification(sender.name, it)
+            groupChatViewModel.sendPushNotification(sender, it)
         }
     }
 

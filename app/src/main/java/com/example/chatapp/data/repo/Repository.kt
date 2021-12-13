@@ -5,6 +5,8 @@ import com.example.chatapp.common.CONTENT_TYPE_TEXT
 import com.example.chatapp.common.logger.Logger
 import com.example.chatapp.common.logger.LoggerImpl
 import com.example.chatapp.data.models.DbMessage
+import com.example.chatapp.data.models.DbUser
+import com.example.chatapp.data.models.DbUser.Companion.FIREBASE_MESSAGE_TOKEN
 import com.example.chatapp.data.network.retrofit.PushContent
 import com.example.chatapp.data.network.retrofit.PushMessage
 import com.example.chatapp.data.network.retrofit.PushNotificationSenderService
@@ -14,9 +16,11 @@ import com.example.chatapp.data.repo.repoInterfaces.UserRepository
 import com.example.chatapp.data.wrappers.Group
 import com.example.chatapp.data.wrappers.Message
 import com.example.chatapp.data.wrappers.User
+import com.example.chatapp.firebase.FirebaseAuth
 import com.example.chatapp.firebase.FirebaseDb
 import com.example.chatapp.firebase.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import java.lang.Exception
@@ -35,6 +39,21 @@ class Repository : UserRepository, MessageRepository, GroupRepository {
                 logger.logError("FireStore Exception")
                 ex.printStackTrace()
                 false
+            }
+        }
+    }
+
+    suspend fun setUserAvatar(userId: String, imgByteArray: ByteArray): String {
+        return withContext(Dispatchers.IO) {
+            try {
+                val url = firebaseStorage.uploadUserAvatar(userId, imgByteArray)
+                logger.logInfo("Avatar url = $url")
+                updateUserAvatar(userId, url)
+                return@withContext url
+            } catch (ex: Exception) {
+                logger.logError("FireStorage Exception")
+                ex.printStackTrace()
+                ""
             }
         }
     }
@@ -84,6 +103,23 @@ class Repository : UserRepository, MessageRepository, GroupRepository {
             return@withContext userList
         }
     }
+
+    suspend fun updateUserName(userId: String, newName: String) {
+        val updates = mapOf(
+            DbUser.USER_NAME to newName
+        )
+        withContext(Dispatchers.IO) {
+            firebaseDatabase.updateUser(userId, updates)
+        }
+    }
+
+    private suspend fun updateUserAvatar(userId: String, imageUrl: String) =
+        coroutineScope {
+            val updates = mapOf(
+                DbUser.USER_AVATAR to imageUrl
+            )
+            firebaseDatabase.updateUser(userId, updates)
+        }
 
     override suspend fun sendTextMessage(
         senderId: String,
@@ -203,6 +239,16 @@ class Repository : UserRepository, MessageRepository, GroupRepository {
             for (i in members) {
                 sendPushNotificationToUser(i, title, message, imageUrl)
             }
+        }
+    }
+
+    suspend fun logout(userId: String) {
+        return withContext(Dispatchers.IO) {
+            val update = mapOf(
+                FIREBASE_MESSAGE_TOKEN to ""
+            )
+            firebaseDatabase.updateUser(userId, update)
+            FirebaseAuth.logout()
         }
     }
 }

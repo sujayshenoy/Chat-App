@@ -33,6 +33,9 @@ class AuthenticationViewModel : ViewModel() {
     private val _getUserFromDbStatus = MutableLiveData<User?>()
     val getUserFromDbStatus = _getUserFromDbStatus as LiveData<User?>
 
+    private val _addUserToDbStatus = MutableLiveData<Boolean>()
+    val addUserToDbStatus = _addUserToDbStatus as LiveData<Boolean>
+
     fun sendOtp(
         activity: Activity,
         phone: String,
@@ -72,7 +75,9 @@ class AuthenticationViewModel : ViewModel() {
 
     fun addUserToDb(user: User) {
         viewModelScope.launch {
-            repository.addUserToDB(user)
+            repository.addUserToDB(user).let {
+                _addUserToDbStatus.postValue(it)
+            }
         }
     }
 
@@ -83,6 +88,8 @@ class AuthenticationViewModel : ViewModel() {
                     it.messageToken = token
                     _getUserFromDbStatus.postValue(it)
                     repository.attachMessageTokenToUser(uid, token)
+                } else {
+                    _getUserFromDbStatus.postValue(it)
                 }
             }
         }

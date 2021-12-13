@@ -40,9 +40,11 @@ class HomeViewModel(uid: String) : ViewModel() {
         getUserList(uid)
     }
 
-    fun logout() {
-        FirebaseAuth.logout()
-        _logoutStatus.value = true
+    fun logout(userId: String) {
+        viewModelScope.launch {
+            repository.logout(userId)
+            _logoutStatus.postValue(true)
+        }
     }
 
     private fun getUserFromDB(uid: String) {
@@ -60,7 +62,6 @@ class HomeViewModel(uid: String) : ViewModel() {
             repository.getAllUsers(userId).collect {
                 userList.clear()
                 userList.addAll(it)
-                logger.logInfo("UserList : $it")
                 _userListChanged.value = true
             }
         }

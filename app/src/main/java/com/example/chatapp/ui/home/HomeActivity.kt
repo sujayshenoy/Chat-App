@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.example.chatapp.R
+import com.example.chatapp.common.UPDATE_USER_REQUEST_CODE
 import com.example.chatapp.common.logger.Logger
 import com.example.chatapp.common.logger.LoggerImpl
 import com.example.chatapp.common.sharedpreferences.SharedPrefUtil
@@ -21,8 +22,10 @@ import com.example.chatapp.ui.authentication.AuthenticationActivity
 import com.example.chatapp.ui.home.common.listeners.ChatFragmentHostListener
 import com.example.chatapp.ui.home.common.viewmodel.HomeViewModel
 import com.example.chatapp.ui.home.common.viewmodel.ViewModelFactory
-import com.example.chatapp.ui.home.groupChat.GroupChatActivity
+import com.example.chatapp.ui.home.groupchat.GroupChatActivity
 import com.example.chatapp.ui.home.peerchat.PeerChatActivity
+import com.example.chatapp.ui.home.profile.ProfileActivity
+import com.example.chatapp.ui.home.profile.ProfileActivity.Companion.CURRENT_USER
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -50,15 +53,25 @@ class HomeActivity : AppCompatActivity() {
         initObservers()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == UPDATE_USER_REQUEST_CODE && data != null) {
+            data.extras?.let {
+                homeViewModel.currentUser = it.getSerializable(CURRENT_USER) as User
+            }
+        }
+    }
+
     @ExperimentalCoroutinesApi
     private fun initViewModel() {
         val uid = sharedPrefUtil.getString(USER_ID)
-        uid?.let {
+        uid.let {
             homeViewModel = ViewModelProvider(
                 this@HomeActivity,
                 ViewModelFactory(HomeViewModel(it))
             )[HomeViewModel::class.java]
-        } ?: logger.logError("Null user id after auth")
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -69,8 +82,15 @@ class HomeActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.logoutButton -> logout()
+            R.id.userProfile -> showUserProfile()
         }
         return true
+    }
+
+    private fun showUserProfile() {
+        val intent = Intent(this@HomeActivity, ProfileActivity::class.java)
+        intent.putExtra(CURRENT_USER, homeViewModel.currentUser)
+        startActivityForResult(intent, UPDATE_USER_REQUEST_CODE)
     }
 
     @ExperimentalCoroutinesApi
@@ -145,6 +165,8 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun logout() {
-        homeViewModel.logout()
+        homeViewModel.currentUser?.let {
+            homeViewModel.logout(it.id)
+        }
     }
 }

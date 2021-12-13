@@ -4,6 +4,7 @@ package com.example.chatapp.common
 const val STORAGE_PERMISSION_REQUEST_CODE = 0
 const val PICK_IMAGE_FROM_GALLERY_REQUEST_CODE = 1
 const val IMAGE_CONFIRM_REQUEST_CODE = 2
+const val UPDATE_USER_REQUEST_CODE = 3
 
 //Content-Types
 const val CONTENT_TYPE_TEXT = "text/plain"

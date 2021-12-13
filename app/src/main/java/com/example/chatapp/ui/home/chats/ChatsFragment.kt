@@ -57,9 +57,9 @@ class ChatsFragment : Fragment(R.layout.fragment_chat) {
 
     @ExperimentalCoroutinesApi
     private fun initRecyclerView() {
-        adapter = ChatsRecyclerAdapter(homeViewModel.userList)
         val recyclerView = binding.chatsRecyclerView
         context?.let { context ->
+            adapter = ChatsRecyclerAdapter(context, homeViewModel.userList)
             val layoutManager = LinearLayoutManager(context)
             recyclerView.layoutManager = layoutManager
         } ?: logger.logError("Empty Context")

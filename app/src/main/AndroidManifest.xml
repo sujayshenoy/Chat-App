@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.chatapp">
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".main.ChatApplication"
@@ -33,19 +34,27 @@
         <activity
             android:name="com.example.chatapp.ui.home.peerchat.PeerChatActivity"
             android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.chatapp.ui.home.groupChat.GroupChatActivity"
+            android:name="com.example.chatapp.ui.home.groupchat.GroupChatActivity"
             android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.home.newgroup.NewGroupActivity"
             android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.home.peerchat.SendImageActivity"
             android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.home.profile.ProfileActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.home.peerchat.ReceiverInfoActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".firebase.FirebaseMessaging"

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_background">
+
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="@dimen/std_med"
+        android:layout_marginTop="@dimen/std_large"
+        android:background="@drawable/ic_arrow_back"
+        android:translationZ="1dp"
+        app:layout_constraintStart_toStartOf="@id/receiverAvatar"
+        app:layout_constraintTop_toTopOf="@id/receiverAvatar" />
+
+    <ImageView
+        android:id="@+id/receiverAvatar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/receiverName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/std_large"
+        android:layout_marginBottom="@dimen/std_large"
+        android:text="@string/john_doe"
+        android:textSize="@dimen/std_large"
+        android:textStyle="bold"
+        android:translationZ="1dp"
+        app:layout_constraintBottom_toBottomOf="@id/receiverAvatar"
+        app:layout_constraintStart_toStartOf="@id/receiverAvatar" />
+</androidx.constraintlayout.widget.ConstraintLayout>
