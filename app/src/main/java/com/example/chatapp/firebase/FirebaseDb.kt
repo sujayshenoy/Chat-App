@@ -21,6 +21,7 @@ import com.example.chatapp.data.wrappers.Message
 import com.example.chatapp.data.wrappers.User
 import com.google.firebase.FirebaseException
 import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -123,7 +124,8 @@ class FirebaseDb {
             val channelId =
                 if (receiverId.isEmpty()) senderId else getChannelId(senderId, receiverId)
             val ref = fireStore.collection(CHANNEL_COLLECTION).document(channelId)
-                .collection(MESSAGE_COLLECTION).orderBy(TIMESTAMP)
+                .collection(MESSAGE_COLLECTION).limit(15)
+                .orderBy(TIMESTAMP, Query.Direction.DESCENDING)
                 .addSnapshotListener { snapshot, e ->
                     if (e != null) {
                         this.trySend(null).isFailure
@@ -131,9 +133,10 @@ class FirebaseDb {
                         logger.logError("Error attaching snapshot listener")
                     } else {
                         snapshot?.let {
-                            for (i in it.documentChanges) {
-                                if (i.type == DocumentChange.Type.ADDED) {
-                                    i.document.data.let { data ->
+                            val docChanges = it.documentChanges
+                            for (i in docChanges.size - 1 downTo 0) {
+                                if (docChanges[i].type == DocumentChange.Type.ADDED) {
+                                    docChanges[i].document.data.let { data ->
                                         val message = Message(
                                             data[SENDER_ID].toString(),
                                             data[CONTENT].toString(),
@@ -150,6 +153,47 @@ class FirebaseDb {
             awaitClose {
                 ref.remove()
             }
+        }
+    }
+
+    suspend fun getMessagesBefore(
+        senderId: String,
+        receiverId: String,
+        timeStamp: Long,
+    ): ArrayList<Message> {
+        return suspendCoroutine {
+            val channelId =
+                if (receiverId.isEmpty()) senderId else getChannelId(senderId, receiverId)
+            logger.logInfo("timeStamp: $timeStamp")
+            fireStore.collection(CHANNEL_COLLECTION).document(channelId)
+                .collection(MESSAGE_COLLECTION)
+                .orderBy(TIMESTAMP, Query.Direction.DESCENDING)
+                .startAfter(timeStamp).limit(15)
+                .get().addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        task.result?.let { snapshot ->
+                            val oldMessages = ArrayList<Message>()
+                            for (i in snapshot.documents) {
+                                i.data?.let { data ->
+                                    val message = Message(
+                                        data[SENDER_ID].toString(),
+                                        data[CONTENT].toString(),
+                                        data[CONTENT_TYPE].toString(),
+                                        data[TIMESTAMP] as Long
+                                    )
+                                    oldMessages.add(message)
+                                }
+                            }
+                            it.resumeWith(Result.success(oldMessages))
+                        }
+                    } else {
+                        it.resumeWith(
+                            Result.failure(
+                                task.exception ?: Exception("Something went wrong")
+                            )
+                        )
+                    }
+                }
         }
     }
 

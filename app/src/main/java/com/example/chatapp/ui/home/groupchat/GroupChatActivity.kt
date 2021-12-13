@@ -9,9 +9,11 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.chatapp.R
 import com.example.chatapp.common.IMAGE_CONFIRM_REQUEST_CODE
 import com.example.chatapp.common.PICK_IMAGE_FROM_GALLERY_REQUEST_CODE
@@ -33,6 +35,7 @@ class GroupChatActivity : AppCompatActivity() {
     private lateinit var sender: User
     private lateinit var group: Group
     private lateinit var dialog: Dialog
+    private var isLoading = false
     private val logger: Logger = LoggerImpl("GroupChat Activity")
 
     companion object {
@@ -105,10 +108,29 @@ class GroupChatActivity : AppCompatActivity() {
         val recyclerView = binding.chatRecyclerView
         recyclerView.adapter = adapter
         val layoutManager = LinearLayoutManager(this@GroupChatActivity)
-        layoutManager.stackFromEnd = true
+        layoutManager.reverseLayout = true
         recyclerView.layoutManager = layoutManager
 
-        recyclerView.post { recyclerView.smoothScrollToPosition(adapter.itemCount) }
+        recyclerView.post { recyclerView.smoothScrollToPosition(0) }
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val visibleItemCount = layoutManager.childCount
+                val totalItemCount = layoutManager.itemCount
+                val firstVisibleItem = layoutManager.findFirstVisibleItemPosition()
+
+                if (!isLoading) {
+                    if ((visibleItemCount + firstVisibleItem) >= totalItemCount && firstVisibleItem >= 0) {
+                        isLoading = true
+                        binding.progressBar.visibility = View.VISIBLE
+                        groupChatViewModel.getMessagesBefore(group.channelId)
+                    }
+                }
+            }
+        })
     }
 
     @ExperimentalCoroutinesApi
@@ -116,9 +138,6 @@ class GroupChatActivity : AppCompatActivity() {
         groupChatViewModel.newMessageStatus.observe(this@GroupChatActivity) {
             if (this::adapter.isInitialized) {
                 adapter.notifyDataSetChanged()
-                if (adapter.itemCount != 0) {
-                    binding.chatRecyclerView.smoothScrollToPosition(adapter.itemCount - 1)
-                }
             }
         }
 
@@ -130,13 +149,20 @@ class GroupChatActivity : AppCompatActivity() {
         groupChatViewModel.sendMessageStatus.observe(this@GroupChatActivity) {
             groupChatViewModel.sendPushNotification(sender, it)
         }
+
+        groupChatViewModel.oldMessageFetchStatus.observe(this@GroupChatActivity) {
+            isLoading = false
+            binding.progressBar.visibility = View.GONE
+            groupChatViewModel.messageList.addAll(it)
+            adapter.notifyDataSetChanged()
+        }
     }
 
     private fun handleImageData(imageUri: Uri) {
         val inputStream = contentResolver.openInputStream(imageUri)
         val bitmap = BitmapFactory.decodeStream(inputStream)
         val baos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.WEBP, 100, baos)
+        bitmap.compress(Bitmap.CompressFormat.WEBP, 75, baos)
         val byteArray = baos.toByteArray()
         val intent = Intent(this@GroupChatActivity, SendImageActivity::class.java)
         intent.putExtra(SendImageActivity.SELECTED_IMAGE, byteArray)

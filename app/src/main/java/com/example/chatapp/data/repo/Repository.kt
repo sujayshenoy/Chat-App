@@ -23,7 +23,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import java.lang.Exception
 
 class Repository : UserRepository, MessageRepository, GroupRepository {
     private val firebaseDatabase = FirebaseDb()
@@ -151,6 +150,14 @@ class Repository : UserRepository, MessageRepository, GroupRepository {
         return firebaseDatabase.getAllMessages(senderId, receiverId)
     }
 
+    suspend fun getMessagesBefore(
+        senderId: String,
+        receiverId: String,
+        timeStamp: Long,
+    ): ArrayList<Message> {
+        return firebaseDatabase.getMessagesBefore(senderId, receiverId, timeStamp)
+    }
+
     override suspend fun sendGroupTextMessage(
         senderId: String,
         channelId: String,
@@ -161,6 +168,13 @@ class Repository : UserRepository, MessageRepository, GroupRepository {
 
     override fun getGroupMessages(channelId: String): Flow<Message?> {
         return getMessages(channelId, "")
+    }
+
+    suspend fun getGroupMessageBefore(
+        channelId: String,
+        timeStamp: Long,
+    ): ArrayList<Message> {
+        return getMessagesBefore(channelId, "", timeStamp)
     }
 
     override suspend fun createGroup(groupName: String, members: ArrayList<User>): String {
