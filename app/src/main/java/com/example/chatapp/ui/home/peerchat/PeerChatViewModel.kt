@@ -15,9 +15,13 @@ import kotlinx.coroutines.launch
 class PeerChatViewModel(senderId: String, receiverId: String) : ViewModel() {
     val messageList = ArrayList<Message>()
     private val repository = Repository()
+    private var lastTimeStamp = 0L
 
     private val _sendMessageStatus = MutableLiveData<Message>()
     val sendMessageStatus = _sendMessageStatus as LiveData<Message>
+
+    private val _oldMessageFetchStatus = MutableLiveData<ArrayList<Message>>()
+    val oldMessageFetchStatus = _oldMessageFetchStatus as LiveData<ArrayList<Message>>
 
     private val _newMessageStatus = MutableLiveData<Boolean>()
     val newMessageStatus = _newMessageStatus as LiveData<Boolean>
@@ -41,10 +45,23 @@ class PeerChatViewModel(senderId: String, receiverId: String) : ViewModel() {
         viewModelScope.launch {
             repository.getMessages(senderId, receiverId).collect {
                 it?.let {
-                    messageList.add(it)
+                    messageList.add(0, it)
+                    lastTimeStamp = messageList[messageList.size - 1].timeStamp
                     _newMessageStatus.postValue(true)
                 }
             }
+        }
+    }
+
+    fun getMessagesBefore(senderId: String, receiverId: String) {
+        viewModelScope.launch {
+            repository.getMessagesBefore(senderId, receiverId, lastTimeStamp)
+                .let {
+                    if (it.isNotEmpty()) {
+                        lastTimeStamp = it[it.size - 1].timeStamp
+                    }
+                    _oldMessageFetchStatus.postValue(it)
+                }
         }
     }
 

@@ -18,12 +18,16 @@ class GroupChatViewModel(private val group: Group) : ViewModel() {
     private val repository = Repository()
     val messageList = ArrayList<Message>()
     val memberList = ArrayList<User>()
+    private var lastTimeStamp = 0L
 
     private val _sendMessageStatus = MutableLiveData<Message>()
     val sendMessageStatus = _sendMessageStatus as LiveData<Message>
 
     private val _newMessageStatus = MutableLiveData<Boolean>()
     val newMessageStatus = _newMessageStatus as LiveData<Boolean>
+
+    private val _oldMessageFetchStatus = MutableLiveData<ArrayList<Message>>()
+    val oldMessageFetchStatus = _oldMessageFetchStatus as LiveData<ArrayList<Message>>
 
     private val _fetchMemberListStatus = MutableLiveData<Boolean>()
     val fetchMembeListStatus = _fetchMemberListStatus as LiveData<Boolean>
@@ -58,10 +62,23 @@ class GroupChatViewModel(private val group: Group) : ViewModel() {
         viewModelScope.launch {
             repository.getGroupMessages(channelId).collect {
                 it?.let {
-                    messageList.add(it)
+                    messageList.add(0, it)
+                    lastTimeStamp = messageList[messageList.size - 1].timeStamp
                     _newMessageStatus.postValue(true)
                 }
             }
+        }
+    }
+
+    fun getMessagesBefore(channelId: String) {
+        viewModelScope.launch {
+            repository.getGroupMessageBefore(channelId, lastTimeStamp)
+                .let {
+                    if (it.isNotEmpty()) {
+                        lastTimeStamp = it[it.size - 1].timeStamp
+                    }
+                    _oldMessageFetchStatus.postValue(it)
+                }
         }
     }
 

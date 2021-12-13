@@ -12,9 +12,9 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.chatapp.R
-import com.example.chatapp.common.CONTENT_TYPE_TEXT
 import com.example.chatapp.common.IMAGE_CONFIRM_REQUEST_CODE
 import com.example.chatapp.common.PICK_IMAGE_FROM_GALLERY_REQUEST_CODE
 import com.example.chatapp.common.STORAGE_PERMISSION_REQUEST_CODE
@@ -24,7 +24,6 @@ import com.example.chatapp.databinding.ActivityChatScreenBinding
 import com.example.chatapp.ui.home.common.viewmodel.ViewModelFactory
 import com.example.chatapp.ui.home.peerchat.ReceiverInfoActivity.Companion.RECEIVER_USER
 import com.example.chatapp.ui.home.peerchat.SendImageActivity.Companion.SELECTED_IMAGE
-import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.io.ByteArrayOutputStream
 
@@ -35,6 +34,7 @@ class PeerChatActivity : AppCompatActivity() {
     private lateinit var receiver: User
     private lateinit var sender: User
     private lateinit var logger: LoggerImpl
+    private var isLoading = false
 
     companion object {
         const val ARG_USER_RECEIVER = "userReceiver"
@@ -118,24 +118,45 @@ class PeerChatActivity : AppCompatActivity() {
         val recyclerView = binding.chatRecyclerView
         recyclerView.adapter = adapter
         val layoutManager = LinearLayoutManager(this@PeerChatActivity)
-        layoutManager.stackFromEnd = true
+        layoutManager.reverseLayout = true
         recyclerView.layoutManager = layoutManager
+        recyclerView.post { recyclerView.smoothScrollToPosition(0) }
 
-        recyclerView.post { recyclerView.smoothScrollToPosition(adapter.itemCount) }
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val visibleItemCount = layoutManager.childCount
+                val totalItemCount = layoutManager.itemCount
+                val firstVisibleItem = layoutManager.findFirstVisibleItemPosition()
+
+                if (!isLoading) {
+                    if ((visibleItemCount + firstVisibleItem) >= totalItemCount && firstVisibleItem >= 0) {
+                        isLoading = true
+                        binding.progressBar.visibility = View.VISIBLE
+                        peerChatViewModel.getMessagesBefore(sender.id, receiver.id)
+                    }
+                }
+            }
+        })
     }
 
     @ExperimentalCoroutinesApi
     private fun initObservers() {
         peerChatViewModel.newMessageStatus.observe(this@PeerChatActivity) {
             adapter.notifyDataSetChanged()
-            if (adapter.itemCount != 0) {
-                binding.chatRecyclerView.smoothScrollToPosition(adapter.itemCount - 1)
-            }
-            logger.logInfo("Messages: ${peerChatViewModel.messageList}")
         }
 
         peerChatViewModel.sendMessageStatus.observe(this@PeerChatActivity) {
             peerChatViewModel.sendPushNotification(receiver.messageToken, receiver.name, it)
+        }
+
+        peerChatViewModel.oldMessageFetchStatus.observe(this@PeerChatActivity) {
+            isLoading = false
+            binding.progressBar.visibility = View.GONE
+            peerChatViewModel.messageList.addAll(it)
+            adapter.notifyDataSetChanged()
         }
     }
 
