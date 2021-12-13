@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_background">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:title="Profile"
+        app:titleTextColor="@color/primary_text" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/userAvatar"
+        android:layout_width="150dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/std_med"
+        android:background="@drawable/ic_user_avatar_placeholder"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+    <ImageButton
+        android:id="@+id/updateAvatarButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/update_avatar_button_background"
+        app:layout_constraintBottom_toBottomOf="@id/userAvatar"
+        app:layout_constraintEnd_toEndOf="@id/userAvatar" />
+
+    <ImageView
+        android:id="@+id/userNameIcon"
+        android:layout_width="25dp"
+        android:layout_height="0dp"
+        android:src="@drawable/ic_account_circle"
+        app:layout_constraintDimensionRatio="1:1" />
+
+
+    <LinearLayout
+        android:id="@+id/userNameTextLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            android:textColor="@color/primary_text"
+            android:textSize="@dimen/std_small_text" />
+
+        <TextView
+            android:id="@+id/userNameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="John Doe"
+            android:textColor="@color/primary_text"
+            android:textSize="@dimen/std_med_text" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/phoneIcon"
+        android:layout_width="25dp"
+        android:layout_height="0dp"
+        android:src="@drawable/ic_phone"
+        app:layout_constraintDimensionRatio="1:1" />
+
+
+    <LinearLayout
+        android:id="@+id/phoneTextLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Phone"
+            android:textColor="@color/primary_text"
+            android:textSize="@dimen/std_small_text" />
+
+        <TextView
+            android:id="@+id/userPhoneText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1234567890"
+            android:textColor="@color/primary_text"
+            android:textSize="@dimen/std_med_text" />
+    </LinearLayout>
+
+
+    <androidx.constraintlayout.helper.widget.Flow
+        android:id="@+id/userNameFlow"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/std_med"
+        android:layout_marginTop="@dimen/std_med"
+        android:layout_marginEnd="@dimen/std_med"
+        android:padding="@dimen/std_small"
+        app:constraint_referenced_ids="userNameIcon, userNameTextLayout"
+        app:flow_horizontalBias="0"
+        app:flow_horizontalGap="@dimen/std_med"
+        app:flow_horizontalStyle="packed"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/userAvatar" />
+
+    <androidx.constraintlayout.helper.widget.Flow
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/std_med"
+        android:layout_marginTop="@dimen/std_med"
+        android:layout_marginEnd="@dimen/std_med"
+        android:padding="@dimen/std_small"
+        app:constraint_referenced_ids="phoneIcon, phoneTextLayout"
+        app:flow_horizontalBias="0"
+        app:flow_horizontalGap="@dimen/std_med"
+        app:flow_horizontalStyle="packed"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/userNameFlow" />
+</androidx.constraintlayout.widget.ConstraintLayout>

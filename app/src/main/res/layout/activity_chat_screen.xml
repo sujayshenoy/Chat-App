@@ -17,8 +17,24 @@
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/ic_arrow_back"
         app:navigationIconTint="@color/primary_text"
-        app:title="@string/john_doe"
-        app:titleTextColor="@color/primary_text" />
+        app:titleTextColor="@color/primary_text">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/chatReceiverAvatar"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="@dimen/std_med"
+            android:src="@drawable/ic_user_avatar_placeholder"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/chatReceiverName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/john_doe"
+            android:textSize="@dimen/std_med_large_text"
+            android:textStyle="bold" />
+    </com.google.android.material.appbar.MaterialToolbar>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chatRecyclerView"

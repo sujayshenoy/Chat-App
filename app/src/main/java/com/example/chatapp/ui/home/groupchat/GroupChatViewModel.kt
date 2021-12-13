@@ -1,4 +1,4 @@
-package com.example.chatapp.ui.home.groupChat
+package com.example.chatapp.ui.home.groupchat
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -74,16 +74,28 @@ class GroupChatViewModel(private val group: Group) : ViewModel() {
         }
     }
 
-    fun sendPushNotification(title: String, message: Message) {
+    fun sendPushNotification(sender: User, message: Message) {
         val memberTokens = ArrayList<String>()
-        memberList.forEach {
+        memberList.filter {
+            it.id != sender.id
+        }.forEach {
             memberTokens.add(it.messageToken)
         }
         viewModelScope.launch {
             if (message.contentType == CONTENT_TYPE_TEXT) {
-                repository.sendPushNotificationToGroup(memberTokens, title, message.content, "")
+                repository.sendPushNotificationToGroup(
+                    memberTokens,
+                    group.name,
+                    message.content,
+                    ""
+                )
             } else {
-                repository.sendPushNotificationToGroup(memberTokens, title, "", message.content)
+                repository.sendPushNotificationToGroup(
+                    memberTokens,
+                    group.name,
+                    "",
+                    message.content
+                )
             }
         }
     }

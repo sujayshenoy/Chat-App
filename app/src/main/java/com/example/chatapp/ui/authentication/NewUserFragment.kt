@@ -35,7 +35,17 @@ class NewUserFragment : Fragment(R.layout.fragment_new_user) {
         getFromArgs()
         binding.welcomeFirstText.text = "Hello,\n${user.phone}"
         initClickListeners()
+        initObservers()
         animateLoading()
+    }
+
+    private fun initObservers() {
+        authenticationViewModel.addUserToDbStatus.observe(viewLifecycleOwner) {
+            authenticationViewModel.getUserFromDB(
+                user.id,
+                sharedPref.getString(MESSAGE_TOKEN)
+            )
+        }
     }
 
     private fun getFromArgs() {
@@ -52,19 +62,7 @@ class NewUserFragment : Fragment(R.layout.fragment_new_user) {
                 it.animate().scaleX(1f).scaleY(1f).setDuration(animDuration).withEndAction {
                     var userName = binding.userNameTextEdit.text.toString()
                     user.name = if (userName.isEmpty()) user.phone else userName
-                    authenticationViewModel.addUserToDb(
-                        user.copy(
-                            messageToken = context?.let { context ->
-                                SharedPrefUtilImpl(
-                                    context
-                                ).getString("firebaseMessagingToken")
-                            } ?: ""
-                        )
-                    )
-                    authenticationViewModel.getUserFromDB(
-                        user.id,
-                        sharedPref.getString(MESSAGE_TOKEN)
-                    )
+                    authenticationViewModel.addUserToDb(user)
                 }.start()
             }.start()
         }

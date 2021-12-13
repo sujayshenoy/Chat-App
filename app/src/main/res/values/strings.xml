@@ -28,4 +28,5 @@
     <string name="empty_group_name_error_text">Please enter a group name</string>
     <string name="empty_selected_members_error_text">Please select group members</string>
     <string name="new_group_name_hint">Type group name here</string>
+    <string name="profile">Profile</string>
 </resources>

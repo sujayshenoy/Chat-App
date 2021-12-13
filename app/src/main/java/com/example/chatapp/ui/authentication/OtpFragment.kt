@@ -90,7 +90,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             logger.logInfo("Keycode: $keyCode")
             if (keyCode in 7..16 && keyEvent.action == KeyEvent.ACTION_DOWN) {
                 if (text.isNotEmpty()) {
-                    view.setText(keyCode)
+                    view.setText(keyCode.toString())
                 }
                 binding.otpEditText2.requestFocus()
             }
@@ -101,7 +101,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             val text = (view as EditText).text.toString()
             if (keyCode in 7..16 && keyEvent.action == KeyEvent.ACTION_DOWN) {
                 if (text.isNotEmpty()) {
-                    view.setText(keyCode)
+                    view.setText(keyCode.toString())
                 }
                 binding.otpEditText3.requestFocus()
             } else if (keyCode == KeyEvent.KEYCODE_DEL && keyEvent.action == KeyEvent.ACTION_DOWN) {
@@ -117,7 +117,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             val text = (view as EditText).text.toString()
             if (keyCode in 7..16 && keyEvent.action == KeyEvent.ACTION_DOWN) {
                 if (text.isNotEmpty()) {
-                    view.setText(keyCode)
+                    view.setText(keyCode.toString())
                 }
                 binding.otpEditText4.requestFocus()
             } else if (keyCode == KeyEvent.KEYCODE_DEL && keyEvent.action == KeyEvent.ACTION_DOWN) {
@@ -133,7 +133,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             val text = (view as EditText).text.toString()
             if (keyCode in 7..16 && keyEvent.action == KeyEvent.ACTION_DOWN) {
                 if (text.isNotEmpty()) {
-                    view.setText(keyCode)
+                    view.setText(keyCode.toString())
                 }
                 binding.otpEditText5.requestFocus()
             } else if (keyCode == KeyEvent.KEYCODE_DEL && keyEvent.action == KeyEvent.ACTION_DOWN) {
@@ -149,7 +149,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             val text = (view as EditText).text.toString()
             if (keyCode in 7..16 && keyEvent.action == KeyEvent.ACTION_DOWN) {
                 if (text.isNotEmpty()) {
-                    view.setText(keyCode)
+                    view.setText(keyCode.toString())
                 }
                 binding.otpEditText6.requestFocus()
             } else if (keyCode == KeyEvent.KEYCODE_DEL && keyEvent.action == KeyEvent.ACTION_DOWN) {
@@ -165,7 +165,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             val text = (view as EditText).text.toString()
             if (keyCode in 7..16 && keyEvent.action == KeyEvent.ACTION_DOWN) {
                 if (text.isNotEmpty()) {
-                    view.setText(keyCode)
+                    view.setText(keyCode.toString())
                 }
                 binding.verifyOtpButton.requestFocus()
             } else if (keyCode == KeyEvent.KEYCODE_DEL && keyEvent.action == KeyEvent.ACTION_DOWN) {

@@ -13,6 +13,7 @@ import com.example.chatapp.data.models.DbMessage.Companion.SENDER_ID
 import com.example.chatapp.data.models.DbMessage.Companion.TIMESTAMP
 import com.example.chatapp.data.models.DbUser
 import com.example.chatapp.data.models.DbUser.Companion.FIREBASE_MESSAGE_TOKEN
+import com.example.chatapp.data.models.DbUser.Companion.USER_AVATAR
 import com.example.chatapp.data.models.DbUser.Companion.USER_NAME
 import com.example.chatapp.data.models.DbUser.Companion.USER_PHONE
 import com.example.chatapp.data.wrappers.Group
@@ -70,6 +71,17 @@ class FirebaseDb {
         }
     }
 
+    suspend fun updateUser(userId: String, updates: Map<String, String>) {
+        return suspendCoroutine {
+            fireStore.collection(USER_COLLECTION).document(userId).update(updates)
+                .addOnFailureListener { exception ->
+                    it.resumeWith(Result.failure(exception))
+                }.addOnSuccessListener { _ ->
+                    it.resumeWith(Result.success(Unit))
+                }
+        }
+    }
+
     suspend fun getUserFromDatabase(uid: String): User? {
         return suspendCoroutine { continuation ->
             fireStore.collection(USER_COLLECTION).document(uid).get()
@@ -84,7 +96,8 @@ class FirebaseDb {
                                     uid,
                                     snapshot[USER_NAME].toString(),
                                     snapshot[USER_PHONE].toString(),
-                                    messageToken = snapshot[FIREBASE_MESSAGE_TOKEN].toString()
+                                    messageToken = snapshot[FIREBASE_MESSAGE_TOKEN].toString(),
+                                    avatar = snapshot[USER_AVATAR].toString()
                                 )
                                 continuation.resumeWith(Result.success(user))
                             }
@@ -196,7 +209,8 @@ class FirebaseDb {
                                     i.id,
                                     data[USER_NAME].toString(),
                                     data[USER_PHONE].toString(),
-                                    messageToken = data[FIREBASE_MESSAGE_TOKEN].toString()
+                                    messageToken = data[FIREBASE_MESSAGE_TOKEN].toString(),
+                                    avatar = data[USER_AVATAR].toString()
                                 )
                                 userList.add(user)
                             }

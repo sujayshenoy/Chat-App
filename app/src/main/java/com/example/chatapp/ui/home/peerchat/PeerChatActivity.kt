@@ -8,9 +8,11 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.chatapp.R
 import com.example.chatapp.common.CONTENT_TYPE_TEXT
 import com.example.chatapp.common.IMAGE_CONFIRM_REQUEST_CODE
@@ -20,7 +22,9 @@ import com.example.chatapp.common.logger.LoggerImpl
 import com.example.chatapp.data.wrappers.User
 import com.example.chatapp.databinding.ActivityChatScreenBinding
 import com.example.chatapp.ui.home.common.viewmodel.ViewModelFactory
+import com.example.chatapp.ui.home.peerchat.ReceiverInfoActivity.Companion.RECEIVER_USER
 import com.example.chatapp.ui.home.peerchat.SendImageActivity.Companion.SELECTED_IMAGE
+import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.io.ByteArrayOutputStream
 
@@ -50,7 +54,12 @@ class PeerChatActivity : AppCompatActivity() {
         )[PeerChatViewModel::class.java]
         logger = LoggerImpl("PeerChat Activity")
 
-        binding.toolbar.title = receiver.name
+        binding.chatReceiverName.text = receiver.name
+        binding.chatReceiverAvatar.visibility = View.VISIBLE
+        Glide.with(this@PeerChatActivity)
+            .load(receiver.avatar)
+            .placeholder(R.drawable.ic_user_avatar_placeholder)
+            .into(binding.chatReceiverAvatar)
         initRecyclerView()
         initClickListeners()
         initObservers()
@@ -78,7 +87,7 @@ class PeerChatActivity : AppCompatActivity() {
         val inputStream = contentResolver.openInputStream(imageUri)
         val bitmap = BitmapFactory.decodeStream(inputStream)
         val baos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.WEBP, 100, baos)
+        bitmap.compress(Bitmap.CompressFormat.WEBP, 75, baos)
         val byteArray = baos.toByteArray()
         val intent = Intent(this@PeerChatActivity, SendImageActivity::class.java)
         intent.putExtra(SELECTED_IMAGE, byteArray)
@@ -161,6 +170,20 @@ class PeerChatActivity : AppCompatActivity() {
                 )
             }
         }
+
+        binding.chatReceiverAvatar.setOnClickListener {
+            showReceiverInfo()
+        }
+
+        binding.chatReceiverName.setOnClickListener {
+            showReceiverInfo()
+        }
+    }
+
+    private fun showReceiverInfo() {
+        val intent = Intent(this@PeerChatActivity, ReceiverInfoActivity::class.java)
+        intent.putExtra(RECEIVER_USER, receiver)
+        startActivity(intent)
     }
 
     private fun pickImage() {
