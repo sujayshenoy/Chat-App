@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">Chat App</string>
     <string name="login_welcome_message">Welcome to ChatApp</string>
     <string name="login_send_otp_button">Send</string>
     <string name="new_user_welcome_text">Hello,\n1234567890</string>
@@ -29,4 +28,5 @@
     <string name="empty_selected_members_error_text">Please select group members</string>
     <string name="new_group_name_hint">Type group name here</string>
     <string name="profile">Profile</string>
+    <string name="app_name">Chat App</string>
 </resources>
