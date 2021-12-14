@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_welcome_message">चैटएप में आपका स्वागत है</string>
+    <string name="login_send_otp_button">भेजना</string>
+    <string name="new_user_welcome_text">Hello,\n1234567890</string>
+    <string name="new_user_welcome_sub_text">क्या हम आपको कुछ और बुलाना चाहते हैं?</string>
+    <string name="new_user_name">आपका नाम?</string>
+    <string name="otp_verification_code_text">पुष्टि संख्या</string>
+    <string name="otp_verification_sub_text">कृपया आपके फ़ोन पर भेजा गया सत्यापन कोड दर्ज करें</string>
+    <string name="otp_hint" translatable="false">-</string>
+    <string name="otp_did_not_receive_text">ओटीपी नहीं मिला?</string>
+    <string name="otp_resend_button">पुन: भेजें</string>
+    <string name="otp_verify_button">ओटीपी सत्यापित करें</string>
+    <string name="tnc_text">हमारी गोपनीयता नीति पढ़ें। सेवा की शर्तें स्वीकार करने के लिए \"सहमत &amp;\nजारी रखें\" टैप करें।</string>
+    <string name="from_sujay_text">से\nसुजय</string>
+    <string name="invalid_phone_error">कृपया एक मान्य फोन नंबर दर्ज करें</string>
+    <string name="chats_tab_text">चैट</string>
+    <string name="group_chats_tab_text">समूह चैट</string>
+    <string name="logout_text">लॉग आउट</string>
+    <string name="john_doe">जॉन डो</string>
+    <string name="send_message_hint">एक संदेश लिखें</string>
+    <string name="Empty_message_error">कृपया एक संदेश दर्ज करें</string>
+    <string name="message_placeholder">संदेश</string>
+    <string name="new_group_fab_text">नया समूह</string>
+    <string name="new_group_sub_title">सदस्यों को जोड़ें</string>
+    <string name="new_group_title">नया समूह</string>
+    <string name="create_group_button_text">समूह बनाना</string>
+    <string name="empty_group_name_error_text">कृपया एक समूह का नाम दर्ज करें</string>
+    <string name="empty_selected_members_error_text">कृपया समूह के सदस्यों का चयन करें</string>
+    <string name="new_group_name_hint">यहां ग्रुप का नाम टाइप करें</string>
+    <string name="profile">प्रोफ़ाइल</string>
+    <string name="app_name">चैट ऐप</string>
+</resources>
